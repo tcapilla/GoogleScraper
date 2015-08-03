@@ -436,7 +436,7 @@ class GoogleParser(Parser):
             elif self.num_results <= 0:
                 self.no_results = True
 
-            if 'No results found for' in self.html or 'did not match any documents' in self.html:
+            if 'No results found for' in str(self.html) or 'did not match any documents' in str(self.html):
                 self.no_results = True
 
             # finally try in the snippets
