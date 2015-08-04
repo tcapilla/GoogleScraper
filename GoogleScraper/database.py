@@ -124,6 +124,10 @@ class SearchEngineResultsPage(Base):
                         snippet=link['snippet'],
                         title=link['title'],
                         visible_link=link['visible_link'],
+                        user=link['user'],
+                        profile_url=link['profile_url'],
+                        views=link['views'],
+                        posted=link['posted'],
                         domain=parsed.netloc,
                         rank=link['rank'],
                         serp=self,
@@ -170,6 +174,10 @@ class Link(Base):
     visible_link = Column(String)
     rank = Column(Integer)
     link_type = Column(String)
+    user = Column(String)
+    profile_url = Column(String)
+    views = Column(String)
+    posted = Column(String)
 
     serp_id = Column(Integer, ForeignKey('serp.id'))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))

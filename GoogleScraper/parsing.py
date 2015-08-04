@@ -929,14 +929,18 @@ class YouTubeParser(Parser):
     normal_search_selectors = {
         'results': {
             'us_ip': {
-                'container': '#results', #content.content-alignment
+                'container': '#results',
                 'result_container': '.yt-lockup-content',
                 'link': '.yt-lockup-title > a::attr(href)',
                 'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
                 'title': '.yt-lockup-title > a::text',
+                'user': '.yt-lockup-byline > a::text',
+                'profile_url': '.yt-lockup-byline > a::attr(href)',
+                'views': '.yt-lockup-meta-info.li',
+                'posted': '.yt-lockup-meta-info.li'
             }
         },
-        'sponsored_ads': {
+        'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript
             'us_ip': {
                 'container': '#yt-lockup.clearfix.yt-uix-tile.yt-lockup-video.yt-lockup-tile', 
                 'result_container': '.yt-lockup-content',
