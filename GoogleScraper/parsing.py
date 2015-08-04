@@ -913,6 +913,39 @@ class BlekkoParser(Parser):
         },
     }
 
+class YouTubeParser(Parser):
+    """Parses SERP pages of the YouTube search engine :D."""
+
+    search_engine = 'youtube'
+
+    search_types = ['normal']
+
+    effective_query_selector = ['']
+
+    no_results_selector = []
+
+    num_results_search_selectors = []
+
+    normal_search_selectors = {
+        'results': {
+            'us_ip': {
+                'container': '#results', #content.content-alignment
+                'result_container': '.yt-lockup-content',
+                'link': '.yt-lockup-title > a::attr(href)',
+                'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
+                'title': '.yt-lockup-title > a::text',
+            }
+        },
+        'sponsored_ads': {
+            'us_ip': {
+                'container': '#yt-lockup.clearfix.yt-uix-tile.yt-lockup-video.yt-lockup-tile', 
+                'result_container': '.yt-lockup-content',
+                'link': '.yt-lockup-title > a::attr(href)',
+                'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
+                'title': '.yt-lockup-title > a::text',
+            }
+        }
+    }
 
 def get_parser_by_url(url):
     """Get the appropriate parser by an search engine url.
@@ -944,6 +977,8 @@ def get_parser_by_url(url):
         parser = AskParser
     if re.search(r'^http[s]?://blekko', url):
         parser = BlekkoParser
+    if re.search(r'^http[s]?://www\.youtube', url):
+        parser = YouTubeParser
     if not parser:
         raise UnknowUrlException('No parser for {}.'.format(url))
 
@@ -978,6 +1013,8 @@ def get_parser_by_search_engine(search_engine):
         return AskParser
     elif search_engine == 'blekko':
         return BlekkoParser
+    elif search_engine == 'youtube':
+        return YouTubeParser
     else:
         raise NoParserForSearchEngineException('No such parser for {}'.format(search_engine))
 

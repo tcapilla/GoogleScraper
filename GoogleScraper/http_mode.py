@@ -105,8 +105,10 @@ def get_GET_params_for_search_engine(query, search_engine, page_number=1, num_re
         if page_number > 1:
             search_params['pn'] = str((page_number - 1) * 10)
         search_params['ie'] = 'utf-8'
+        
     elif search_engine == 'duckduckgo':
         search_params['q'] = query
+        
     elif search_engine == 'ask':
         search_params['q'] = query
         search_params['qsrc'] = '0'
@@ -114,8 +116,12 @@ def get_GET_params_for_search_engine(query, search_engine, page_number=1, num_re
         search_params['qo'] = 'homepageSearchBox'
         if page_number > 1:
             search_params['page'] = str(page_number)
+
     elif search_engine == 'blekko':
         search_params['q'] = query
+
+    elif search_engine == 'youtube':
+        search_params['search_query'] = query
 
     return search_params
 
