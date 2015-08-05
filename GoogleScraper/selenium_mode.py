@@ -574,7 +574,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
     def run(self):
         """Run the SelScraper."""
 
-        self._set_xvfb_display()
+        #self._set_xvfb_display()
 
         if not self._get_webdriver():
             raise_or_log('{}: Aborting due to no available selenium webdriver.'.format(self.name),
