@@ -929,7 +929,7 @@ class YouTubeParser(Parser):
     normal_search_selectors = {
         'results': {
             'us_ip': {
-                'container': '#results',
+                'container': '#result', 
                 'result_container': '.yt-lockup-content',
                 'link': '.yt-lockup-title > a::attr(href)',
                 'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
@@ -942,15 +942,49 @@ class YouTubeParser(Parser):
         },
         'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript
             'us_ip': {
-                'container': '#yt-lockup.clearfix.yt-uix-tile.yt-lockup-video.yt-lockup-tile', 
+                'container': '.pyv-afc-ads-inner', 
                 'result_container': '.yt-lockup-content',
                 'link': '.yt-lockup-title > a::attr(href)',
                 'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
                 'title': '.yt-lockup-title > a::text',
+                'user': '.yt-lockup-byline > a::text',
+                'profile_url': '.yt-lockup-byline > a::attr(href)',
+                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
+                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
             }
         }
     }
 
+class YouTubeSponsoredParser(Parser):
+    """Parses SERP pages of the YouTube (sponsored) search engine :D."""
+
+    search_engine = 'youtube_sponsored'
+
+    search_types = ['normal']
+
+    effective_query_selector = ['']
+
+    no_results_selector = []
+
+    num_results_search_selectors = []
+
+    normal_search_selectors = {
+        'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript
+            'us_ip': {
+                'container': '.pyv-afc-ads-inner', 
+                'result_container': '.yt-lockup-content',
+                'link': '.yt-lockup-title > a::attr(href)',
+                'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
+                'title': '.yt-lockup-title > a::text',
+                'user': '.yt-lockup-byline > a::text',
+                'profile_url': '.yt-lockup-byline > a::attr(href)',
+                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
+                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
+            }
+        }
+    }
+
+    
 def get_parser_by_url(url):
     """Get the appropriate parser by an search engine url.
 
@@ -981,8 +1015,8 @@ def get_parser_by_url(url):
         parser = AskParser
     if re.search(r'^http[s]?://blekko', url):
         parser = BlekkoParser
-    if re.search(r'^http[s]?://www\.youtube', url):
-        parser = YouTubeParser
+    #if re.search(r'^http[s]?://www\.youtube', url):
+    #    parser = YouTubeParser
     if not parser:
         raise UnknowUrlException('No parser for {}.'.format(url))
 
@@ -1019,6 +1053,8 @@ def get_parser_by_search_engine(search_engine):
         return BlekkoParser
     elif search_engine == 'youtube':
         return YouTubeParser
+    elif search_engine == 'youtube_sponsored':
+        return YouTubeSponsoredParser
     else:
         raise NoParserForSearchEngineException('No such parser for {}'.format(search_engine))
 

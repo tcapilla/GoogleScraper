@@ -123,6 +123,9 @@ def get_GET_params_for_search_engine(query, search_engine, page_number=1, num_re
     elif search_engine == 'youtube':
         search_params['search_query'] = query
 
+    elif search_engine == 'youtube_sponsored':
+        search_params['search_query'] = query        
+        
     return search_params
 
 

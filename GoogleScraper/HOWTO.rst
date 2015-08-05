@@ -59,6 +59,8 @@ exhaustive guide.
         if re.search(r'^http[s]?://www\.foobar', url):
             parser = FooBarParser
 
+      Strictly speaking, this section does not appear to be necessary.
+
    3. add the name of your search engine to
       `get_parser_by_search_engine`, e.g.::
 

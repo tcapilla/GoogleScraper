@@ -64,6 +64,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'blekko': '',
         'duckduckgo': '',
         'youtube': '',
+        'youtube_sponsored': '',
         'googleimg': '#pnnext',
         'baiduimg': '.n',
     }
@@ -78,6 +79,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ask': (By.NAME, 'q'),
         'blekko': (By.NAME, 'q'),
         'youtube': (By.NAME, 'search_query'),
+        'youtube_sponsored': (By.NAME, 'search_query'),
         'google': (By.NAME, 'q'),
         'googleimg': (By.NAME, 'as_q'),
         'baiduimg': (By.NAME, 'word'),
@@ -107,6 +109,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ask': 'http://ask.com/',
         'blekko': 'http://blekko.com/',
         'youtube': 'http://youtube.com/',
+        'youtube_sponsored': 'http://youtube.com/',
     }
 
     image_search_locations = {
@@ -119,6 +122,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ask': 'http://www.ask.com/pictures/',
         'blekko': None,
         'youtube': None,
+        'youtube_sponsored': None,
         'googleimg':'https://www.google.com/advanced_image_search',
         'baiduimg': 'http://image.baidu.com/',
     }
