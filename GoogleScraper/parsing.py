@@ -186,7 +186,7 @@ class Parser():
                     css = selectors['container']
 
                 results = self.dom.xpath(
-                    self.css_to_xpath(css)
+                    self.css_to_xpath(css) # This is where the css selection is compiled to xpath.
                 )
 
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
@@ -936,8 +936,8 @@ class YouTubeParser(Parser):
                 'title': '.yt-lockup-title > a::text',
                 'user': '.yt-lockup-byline > a::text',
                 'profile_url': '.yt-lockup-byline > a::attr(href)',
-                'views': '.yt-lockup-meta-info.li',
-                'posted': '.yt-lockup-meta-info.li'
+                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
+                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
             }
         },
         'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript

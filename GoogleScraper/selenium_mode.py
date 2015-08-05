@@ -63,6 +63,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'ask': '#paging div a.txt3.l_nu',
         'blekko': '',
         'duckduckgo': '',
+        'youtube': '',
         'googleimg': '#pnnext',
         'baiduimg': '.n',
     }
@@ -76,6 +77,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'duckduckgo': (By.NAME, 'q'),
         'ask': (By.NAME, 'q'),
         'blekko': (By.NAME, 'q'),
+        'youtube': (By.NAME, 'search_query'),
         'google': (By.NAME, 'q'),
         'googleimg': (By.NAME, 'as_q'),
         'baiduimg': (By.NAME, 'word'),
@@ -104,6 +106,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'duckduckgo': 'https://duckduckgo.com/',
         'ask': 'http://ask.com/',
         'blekko': 'http://blekko.com/',
+        'youtube': 'http://youtube.com/',
     }
 
     image_search_locations = {
@@ -115,6 +118,7 @@ class SelScrape(SearchEngineScrape, threading.Thread):
         'duckduckgo': None,  # duckduckgo doesnt't support direct image search
         'ask': 'http://www.ask.com/pictures/',
         'blekko': None,
+        'youtube': None,
         'googleimg':'https://www.google.com/advanced_image_search',
         'baiduimg': 'http://image.baidu.com/',
     }
