@@ -120,16 +120,15 @@ class SearchEngineResultsPage(Base):
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
 
                     Link(
-                        link=link['link'],
-                        snippet=link['snippet'],
-                        title=link['title'],
-                        visible_link=link['visible_link'],
-                        user=link['user'],
-                        profile_url=link['profile_url'],
-                        views=link['views'],
-                        posted=link['posted'],
+                        link=link.get('link'),
+                        snippet=link.get('snippet'),
+                        title=link.get('title'),
+                        visible_link=link.get('visible_link'),
+                        user=link.get('user'),
+                        profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
-                        rank=link['rank'],
+                        rank=link.get('rank'),
+                        scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
                         serp=self,
                         link_type=key
                     )
@@ -176,8 +175,7 @@ class Link(Base):
     link_type = Column(String)
     user = Column(String)
     profile_url = Column(String)
-    views = Column(String)
-    posted = Column(String)
+    scrape_id = Column(String)
 
     serp_id = Column(Integer, ForeignKey('serp.id'))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))

@@ -930,14 +930,12 @@ class YouTubeParser(Parser):
         'results': {
             'us_ip': {
                 'container': '#result', 
-                'result_container': '.yt-lockup-content',
-                'link': '.yt-lockup-title > a::attr(href)',
-                'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
-                'title': '.yt-lockup-title > a::text',
-                'user': '.yt-lockup-byline > a::text',
-                'profile_url': '.yt-lockup-byline > a::attr(href)',
-                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
-                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
+                'result_container': 'yt-lockup-content',
+                'link': 'yt-lockup-title > a::attr(href)',
+                'snippet': 'yt-lockup-description yt-ui-ellipsis yt-ui-ellipsis-2',
+                'title': 'yt-lockup-title > a::text',
+                'user': 'yt-lockup-byline > a::text',
+                'profile_url': 'yt-lockup-byline > a::attr(href)'
             }
         },
         'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript
@@ -948,9 +946,7 @@ class YouTubeParser(Parser):
                 'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
                 'title': '.yt-lockup-title > a::text',
                 'user': '.yt-lockup-byline > a::text',
-                'profile_url': '.yt-lockup-byline > a::attr(href)',
-                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
-                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
+                'profile_url': '.yt-lockup-byline > a::attr(href)'
             }
         }
     }
@@ -969,17 +965,15 @@ class YouTubeSponsoredParser(Parser):
     num_results_search_selectors = []
 
     normal_search_selectors = {
-        'sponsored_ads': { # These don't work because sponsored ads are loaded via javascript
+        'sponsored_ads': { # Needs Selenium because sponsored ads are loaded by script
             'us_ip': {
                 'container': '.pyv-afc-ads-inner', 
                 'result_container': '.yt-lockup-content',
-                'link': '.yt-lockup-title > a::attr(href)',
-                'snippet': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
+                'link': '.yt-lockup-title > a::attr(snippet)',
+                'href': '.yt-lockup-description.yt-ui-ellipsis.yt-ui-ellipsis-2',
                 'title': '.yt-lockup-title > a::text',
                 'user': '.yt-lockup-byline > a::text',
-                'profile_url': '.yt-lockup-byline > a::attr(href)',
-                'views': '.yt-lockup-meta.yt-lockup-meta-info', # FIXME: Need to get first <li>
-                'posted': '.yt-lockup-meta.yt-lockup-meta-info' # FIXME: Need to get second <li>
+                'profile_url': '.yt-lockup-byline > a::attr(href)'
             }
         }
     }

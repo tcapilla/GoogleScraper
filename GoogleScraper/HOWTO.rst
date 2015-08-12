@@ -85,7 +85,6 @@ Adding Selenium Scrapers
    Make sure that the extracted binary is somewhere in the PATH of
    the scraper.
 
-2. 
    
 You may also edit `scraping.py` if you intend on using Selenium.)
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import uuid
 from GoogleScraper.version import __version__
 
 
@@ -112,6 +113,10 @@ def get_command_line(print_help=False):
                              'yandex". If you want to use all search engines that are available, give \'*\' as '
                              'argument.')
 
+    parser.add_argument('--scrape-id', action='store', default=str(uuid.uuid4()),
+                        help=('The ID of the scraping session. If not provided, a unique ID will be generated for '
+                              'each session.'))
+    
     if print_help:
         print(parser.format_help())
         return
@@ -129,4 +134,5 @@ def get_command_line(print_help=False):
             ['clean', 'debug', 'simulate', 'proxy_file', 'view_config', 'config_file', 'mysql_proxy_db', 'verbosity',
              'output_format', 'shell', 'output_filename', 'output_format', 'version', 'extended_config']),
         'OUTPUT': make_dict(['output_filename']),
+        'SCRAPE_INFOS': make_dict(['scrape_id'])
     }
