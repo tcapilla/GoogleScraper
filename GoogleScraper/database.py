@@ -24,16 +24,20 @@ from sqlalchemy import create_engine, UniqueConstraint
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
+L2WR_SCHEMA = 'l2wr'
+
 Base = declarative_base()
 
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
-                               Column('scraper_search_id', Integer, ForeignKey('scraper_search.id')),
-                               Column('serp_id', Integer, ForeignKey('serp.id')))
+                               Column('scraper_search_id', Integer, ForeignKey("%s.scraper_search.id" % (L2WR_SCHEMA))),
+                               Column('serp_id', Integer, ForeignKey("%s.serp.id" % (L2WR_SCHEMA,))),
+                               schema=L2WR_SCHEMA)
 
 
 class ScraperSearch(Base):
     __tablename__ = 'scraper_search'
-
+    __table_args__ = {'schema' : L2WR_SCHEMA}
+    
     id = Column(Integer, primary_key=True)
     keyword_file = Column(String)
     number_search_engines_used = Column(Integer)
@@ -59,6 +63,7 @@ class ScraperSearch(Base):
 
 class SearchEngineResultsPage(Base):
     __tablename__ = 'serp'
+    __table_args__ = {'schema' : L2WR_SCHEMA}
 
     id = Column(Integer, primary_key=True)
     status = Column(String, default='successful')
@@ -165,7 +170,8 @@ SERP = SearchEngineResultsPage
 
 class Link(Base):
     __tablename__ = 'link'
-
+    __table_args__ = {'schema' : L2WR_SCHEMA}
+    
     id = Column(Integer, primary_key=True)
     title = Column(String)
     snippet = Column(String)
@@ -180,7 +186,7 @@ class Link(Base):
     scrape_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
-    serp_id = Column(Integer, ForeignKey('serp.id'))
+    serp_id = Column(Integer, ForeignKey("%s.serp.id" % (L2WR_SCHEMA,)))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
 
     def __str__(self):
@@ -192,6 +198,7 @@ class Link(Base):
 
 class Proxy(Base):
     __tablename__ = 'proxy'
+    __table_args__ = {'schema' : L2WR_SCHEMA}
 
     id = Column(Integer, primary_key=True)
     ip = Column(String)
@@ -227,7 +234,8 @@ db_Proxy = Proxy
 
 class SearchEngine(Base):
     __tablename__ = 'search_engine'
-
+    __table_args__ = {'schema' : L2WR_SCHEMA}
+    
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
     http_url = Column(String)
@@ -242,10 +250,11 @@ class SearchEngineProxyStatus(Base):
     """
 
     __tablename__ = 'search_engine_proxy_status'
+    __table_args__ = {'schema' : L2WR_SCHEMA}
 
     id = Column(Integer, primary_key=True)
-    proxy_id = Column(Integer, ForeignKey('proxy.id'))
-    search_engine_id = Column(Integer, ForeignKey('search_engine.id'))
+    proxy_id = Column(Integer, ForeignKey("%s.proxy.id" % (L2WR_SCHEMA,)))
+    search_engine_id = Column(Integer, ForeignKey("%s.search_engine.id" % (L2WR_SCHEMA,)))
     available = Column(Boolean)
     last_check = Column(DateTime)
 
@@ -259,10 +268,12 @@ def get_engine(path=None):
     Returns:
         The sqlalchemy engine.
     """
-    db_path = path if path else Config['OUTPUT'].get('database_name', 'google_scraper') + '.db'
-    echo = True if (Config['GLOBAL'].getint('verbosity', 0) >= 4) else False
-    engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
-    Base.metadata.create_all(engine)
+    REDSHIFT_HOST = 'l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube'
+    #db_path = path if path else Config['OUTPUT'].get('database_name', 'google_scraper') + '.db'
+    #echo = True if (Config['GLOBAL'].getint('verbosity', 0) >= 4) else False
+    #engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
+    engine = create_engine('redshift+psycopg2://%s:%s@%s' % ('admin', 'S@2vTeGY#u', REDSHIFT_HOST))
+    #Base.metadata.create_all(engine)
 
     return engine
 
