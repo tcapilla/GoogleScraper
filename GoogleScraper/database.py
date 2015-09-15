@@ -129,6 +129,7 @@ class SearchEngineResultsPage(Base):
                         snippet=link.get('snippet'),
                         title=link.get('title'),
                         visible_link=link.get('visible_link'),
+                        actual_link=link.get('link'),
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
@@ -177,11 +178,13 @@ class Link(Base):
     link = Column(String)
     domain = Column(String)
     visible_link = Column(String)
+    actual_link = Column(String)
     rank = Column(Integer)
     link_type = Column(String)
     user = Column(String)
     profile_url = Column(String)
     scrape_id = Column(String)
+    scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     serp_id = Column(Integer, ForeignKey("%s.serp.id" % (L2WR_SCHEMA,)))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
@@ -217,7 +220,7 @@ class Proxy(Base):
     org = Column(String)
     postal = Column(String)
 
-    UniqueConstraint(ip, port, name='unique_proxy')
+    #UniqueConstraint(ip, port, name='unique_proxy')
 
     def __str__(self):
         return '<Proxy {ip}>'.format(**self.__dict__)
