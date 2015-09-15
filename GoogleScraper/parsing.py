@@ -353,34 +353,49 @@ class GoogleParser(Parser):
     normal_search_selectors = {
         'results': {
             'us_ip': {
-                'container': 'div.srg',
-                'result_container': 'div.rc',
+                'container': '#center_col',
+                'result_container': 'li.g ',
                 'link': 'h3.r > a:first-child::attr(href)',
                 'snippet': 'div.s span.st::text',
                 'title': 'h3.r > a:first-child::text',
                 'visible_link': 'cite::text'
-            }
-            
+            },
+            'de_ip': {
+                'container': '#center_col',
+                'result_container': 'li.g ',
+                'link': 'h3.r > a:first-child::attr(href)',
+                'snippet': 'div.s span.st::text',
+                'title': 'h3.r > a:first-child::text',
+                'visible_link': 'cite::text'
+            },
+            'de_ip_news_items': {
+                'container': 'li.card-section',
+                'link': 'a._Dk::attr(href)',
+                'snippet': 'span._dwd::text',
+                'title': 'a._Dk::text',
+                'visible_link': 'cite::text'
+            },
         },
         'ads_main': {
             'us_ip': {
                 'container': '#center_col',
+                'result_container': 'li.ads-ad',
+                'link': 'h3.r > a:first-child::attr(href)',
+                'snippet': 'div.s span.st::text',
+                'title': 'h3.r > a:first-child::text',
+                'visible_link': '.ads-visurl cite::text',
+            },
+            'de_ip': {
+                'container': '#center_col',
                 'result_container': '.ads-ad',
-                'link': 'h3 > a:nth-child(2)::attr(href)',
+                'link': 'h3 > a:first-child::attr(href)',
                 'snippet': '.ads-creative::text',
-                'title': 'h3 > a:nth-child(2)::text',
+                'title': 'h3 > a:first-child::text',
                 'visible_link': '.ads-visurl cite::text',
             }
         },
-        'ads_side': {
-            'us_ip': {
-                'container': '#rhs_block',
-                'result_container': '.ads-ad',
-                'link': 'h3 > a:nth-child(2)::attr(href)',
-                'snippet': '.ads-creative::text',
-                'title': 'h3 > a:nth-child(2)::text',
-                'visible_link': '.ads-visurl cite::text',
-            }
+        'ads_aside': {
+
         }
     }
 
