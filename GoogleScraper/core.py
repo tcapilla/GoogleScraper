@@ -8,7 +8,7 @@ import os
 import logging
 import queue
 from GoogleScraper.commandline import get_command_line
-from GoogleScraper.database import ScraperSearch, SERP, Link, get_session, fixtures
+from GoogleScraper.database import ScraperSearch, SERP, Link, get_session, fixtures, generate_id
 from GoogleScraper.proxies import parse_proxy_file, get_proxies_from_mysql_db, add_proxies_to_db
 from GoogleScraper.caching import fix_broken_cache_names, _caching_is_one_to_one, parse_all_cached_files, \
     clean_cachefiles
@@ -345,6 +345,7 @@ def main(return_results=False, parse_cmd_line=True):
 
     if not scraper_search:
         scraper_search = ScraperSearch(
+            id=generate_id(),
             keyword_file=os.path.abspath(kwfile),
             number_search_engines_used=num_search_engines,
             number_proxies_used=len(proxies),

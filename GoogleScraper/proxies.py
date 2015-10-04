@@ -117,7 +117,7 @@ def add_proxies_to_db(proxies, session):
             p = session.query(database.Proxy).filter(proxy.host == database.Proxy.ip).first()
 
             if not p:
-                p = database.Proxy(ip=proxy.host)
+                p = database.Proxy(id = database.generate_id(), ip=proxy.host)
 
             p.port = proxy.port
             p.username = proxy.username

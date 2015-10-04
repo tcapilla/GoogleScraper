@@ -23,18 +23,25 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine, UniqueConstraint
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from uuid import uuid4
 
 Base = declarative_base()
 
+L2WR_DATA = 'l2wr_data'
+
+generate_id = lambda: str(uuid4())
+
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
-                               Column('scraper_search_id', Integer, ForeignKey('scraper_search.id')),
-                               Column('serp_id', Integer, ForeignKey('serp.id')))
+                               Column('scraper_search_id', Integer, ForeignKey(L2WR_DATA + '.scraper_search.id')),
+                               Column('serp_id', Integer, ForeignKey(L2WR_DATA + '.serp.id')),
+                               schema=L2WR_DATA)
 
 
 class ScraperSearch(Base):
     __tablename__ = 'scraper_search'
+    __table_args__ = {'schema' : L2WR_DATA}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True, autoincrement=False)
     keyword_file = Column(String)
     number_search_engines_used = Column(Integer)
     used_search_engines = Column(String)
@@ -59,8 +66,9 @@ class ScraperSearch(Base):
 
 class SearchEngineResultsPage(Base):
     __tablename__ = 'serp'
+    __table_args__ = {'schema' : L2WR_DATA}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True, autoincrement=False)
     status = Column(String, default='successful')
     search_engine_name = Column(String)
     scrape_method = Column(String)
@@ -108,7 +116,7 @@ class SearchEngineResultsPage(Base):
 
         self.num_results_for_query = parser.num_results_for_query
         self.num_results = parser.num_results
-        self.effective_query = parser.effective_query
+        self.effective_query = str(parser.effective_query)
         self.no_results = parser.no_results
 
         for key, value in parser.search_results.items():
@@ -120,6 +128,7 @@ class SearchEngineResultsPage(Base):
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
 
                     Link(
+                        id=generate_id(),
                         link=link.get('link'),
                         snippet=link.get('snippet'),
                         title=link.get('title'),
@@ -165,8 +174,9 @@ SERP = SearchEngineResultsPage
 
 class Link(Base):
     __tablename__ = 'link'
+    __table_args__ = {'schema' : L2WR_DATA}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True, autoincrement=False)
     title = Column(String)
     snippet = Column(String)
     link = Column(String)
@@ -180,7 +190,7 @@ class Link(Base):
     scrape_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
-    serp_id = Column(Integer, ForeignKey('serp.id'))
+    serp_id = Column(String, ForeignKey(L2WR_DATA + '.serp.id'))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
 
     def __str__(self):
@@ -192,12 +202,13 @@ class Link(Base):
 
 class Proxy(Base):
     __tablename__ = 'proxy'
+    __table_args__ = {'schema' : L2WR_DATA}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True, autoincrement=False)
     ip = Column(String)
     hostname = Column(String)
     port = Column(Integer)
-    proto = Column(Enum('socks5', 'socks4', 'http'))
+    proto = Column(String), #Enum('socks5', 'socks4', 'http'))
     username = Column(String)
     password = Column(String)
 
@@ -227,9 +238,10 @@ db_Proxy = Proxy
 
 class SearchEngine(Base):
     __tablename__ = 'search_engine'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
+    __table_args__ = {'schema' : L2WR_DATA}
+    
+    id = Column(String, primary_key=True, autoincrement=False)
+    name = Column(String, unique=False)
     http_url = Column(String)
     selenium_url = Column(String)
     image_url = Column(String)
@@ -242,10 +254,11 @@ class SearchEngineProxyStatus(Base):
     """
 
     __tablename__ = 'search_engine_proxy_status'
-
-    id = Column(Integer, primary_key=True)
-    proxy_id = Column(Integer, ForeignKey('proxy.id'))
-    search_engine_id = Column(Integer, ForeignKey('search_engine.id'))
+    __table_args__ = {'schema' : L2WR_DATA}
+    
+    id = Column(String, primary_key=True, autoincrement=False)
+    proxy_id = Column(String, ForeignKey(L2WR_DATA + '.proxy.id'))
+    search_engine_id = Column(String, ForeignKey(L2WR_DATA + '.search_engine.id'))
     available = Column(Boolean)
     last_check = Column(DateTime)
 
@@ -261,7 +274,11 @@ def get_engine(path=None):
     """
     db_path = path if path else Config['OUTPUT'].get('database_name', 'google_scraper') + '.db'
     echo = True if (Config['GLOBAL'].getint('verbosity', 0) >= 4) else False
-    engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
+    
+    #engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
+    db_path = "admin:S@2vTeGY#u@l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube"
+    engine = create_engine('postgresql://' + db_path, echo=echo)
+
     Base.metadata.create_all(engine)
 
     return engine
@@ -291,6 +308,6 @@ def fixtures(session):
         if se:
             search_engine = session.query(SearchEngine).filter(SearchEngine.name == se).first()
             if not search_engine:
-                session.add(SearchEngine(name=se))
+                session.add(SearchEngine(id=generate_id(), name=se))
 
     session.commit()
