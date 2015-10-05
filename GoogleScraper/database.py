@@ -82,12 +82,12 @@ class SearchEngineResultsPage(Base):
     # Whether we got any results at all. This is the same as len(serp.links)
     num_results = Column(Integer, default=-1)
 
-    query = Column(String)
+    query = Column(String(1024))
 
     # if the query was modified by the search engine because there weren't any
     # results, this variable is set to the query that was used instead.
     # Otherwise it remains empty.
-    effective_query = Column(String, default='')
+    effective_query = Column(String(1024), default='')
 
     # Whether the search engine has no results.
     # This is not the same as num_results, because some search engines
@@ -177,16 +177,16 @@ class Link(Base):
     __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
-    title = Column(String)
-    snippet = Column(String)
-    link = Column(String)
-    domain = Column(String)
-    visible_link = Column(String)
-    actual_link = Column(String)
+    title = Column(String(1024))
+    snippet = Column(String(1024))
+    link = Column(String(1024))
+    domain = Column(String(1024))
+    visible_link = Column(String(1024))
+    actual_link = Column(String(1024))
     rank = Column(Integer)
     link_type = Column(String)
     user = Column(String)
-    profile_url = Column(String)
+    profile_url = Column(String(1024))
     scrape_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
