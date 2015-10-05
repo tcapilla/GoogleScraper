@@ -8,7 +8,7 @@ from lxml.html.clean import Cleaner
 import logging
 from urllib.parse import unquote
 import pprint
-from GoogleScraper.database import SearchEngineResultsPage
+from GoogleScraper.database import SearchEngineResultsPage, generate_id
 from GoogleScraper.config import Config
 from GoogleScraper.log import out
 from cssselect import HTMLTranslator
@@ -1061,6 +1061,8 @@ def parse_serp(html=None, parser=None, scraper=None, search_engine=None, query='
 
     serp = SearchEngineResultsPage()
 
+    serp.id = generate_id()
+    
     if query:
         serp.query = query
 

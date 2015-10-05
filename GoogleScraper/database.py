@@ -114,7 +114,7 @@ class SearchEngineResultsPage(Base):
             A parser object.
         """
 
-        self.num_results_for_query = parser.num_results_for_query
+        self.num_results_for_query = str(parser.num_results_for_query)
         self.num_results = parser.num_results
         self.effective_query = str(parser.effective_query)
         self.no_results = parser.no_results
@@ -155,7 +155,7 @@ class SearchEngineResultsPage(Base):
         Args:
             A scraper object.
         """
-
+        self.id = generate_id()
         self.query = scraper.query
         self.search_engine_name = scraper.search_engine_name
         self.scrape_method = scraper.scrape_method
