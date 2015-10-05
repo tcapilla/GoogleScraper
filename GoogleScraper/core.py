@@ -457,7 +457,7 @@ def main(return_results=False, parse_cmd_line=True):
         outfile.end()
 
     scraper_search.stopped_searching = datetime.datetime.utcnow()
-    scraper_search = generate_id() # test
+
     session.add(scraper_search)
     session.commit()
 

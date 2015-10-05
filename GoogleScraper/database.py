@@ -32,8 +32,8 @@ L2WR_DATA = 'l2wr_data'
 generate_id = lambda: str(uuid4())
 
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
-                               Column('scraper_search_id', Integer, ForeignKey(L2WR_DATA + '.scraper_search.id')),
-                               Column('serp_id', Integer, ForeignKey(L2WR_DATA + '.serp.id')),
+                               Column('scraper_search_id', String, ForeignKey(L2WR_DATA + '.scraper_search.id')),
+                               Column('serp_id', String, ForeignKey(L2WR_DATA + '.serp.id')),
                                schema=L2WR_DATA)
 
 

@@ -426,7 +426,6 @@ def parse_all_cached_files(scrape_jobs, session, scraper_search):
     out('{}/{} objects have been read from the cache. {} remain to get scraped.'.format(
         num_cached, num_total, num_total - num_cached), lvl=2)
 
-    scraper_search.id = generate_id() # test
     session.add(scraper_search)
     session.commit()
 
