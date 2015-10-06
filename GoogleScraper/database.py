@@ -279,8 +279,8 @@ def get_engine(path=None):
     
     #engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
     #db_path = "admin:S@2vTeGY#u@l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube"
-    db_path = ("%s:%s@%s:%s/%s" % (Config['ENV'].get('HYPERCUBE_REDSHIFT_USERNAME'),
-                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PASSWORD'),
+    db_path = ("%s:%s@%s:%s/%s" % (Config['ENV'].get('HYPERCUBE_REDSHIFT_USERNAME').replace("'", ""),
+                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PASSWORD').replace("'", ""),
                                    Config['ENV'].get('HYPERCUBE_REDSHIFT_HOST'),
                                    Config['ENV'].get('HYPERCUBE_REDSHIFT_PORT'),
                                    Config['ENV'].get('HYPERCUBE_REDSHIFT_DATABASE')))
