@@ -19,7 +19,7 @@ Config = {
     },
     'GLOBAL': {
         # The directory path for cached google results
-        'do_caching': True,
+        'do_caching': False,
         # If set, then compress/decompress files
         'compress_cached_files': True,
         # If set, use this compressing algorithm, else just use zip
