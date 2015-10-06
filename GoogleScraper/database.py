@@ -139,6 +139,7 @@ class SearchEngineResultsPage(Base):
                         domain=parsed.netloc,
                         rank=link.get('rank'),
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
+                        project_id=Config['SCRAPE_INFOS'].get('project_id'),
                         serp=self,
                         link_type=key
                     )
@@ -188,6 +189,7 @@ class Link(Base):
     user = Column(String)
     profile_url = Column(String)
     scrape_id = Column(String)
+    project_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     serp_id = Column(String, ForeignKey(L2WR_DATA + '.serp.id'))
@@ -276,7 +278,12 @@ def get_engine(path=None):
     echo = True if (Config['GLOBAL'].getint('verbosity', 0) >= 4) else False
     
     #engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
-    db_path = "admin:S@2vTeGY#u@l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube"
+    #db_path = "admin:S@2vTeGY#u@l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube"
+    db_path = ("%s:%s@%s:%s/%s" % (Config['ENV'].get('HYPERCUBE_REDSHIFT_USERNAME'),
+                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PASSWORD'),
+                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_HOST'),
+                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PORT'),
+                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_DATABASE')))
     engine = create_engine('postgresql://' + db_path, echo=echo)
 
     Base.metadata.create_all(engine)
