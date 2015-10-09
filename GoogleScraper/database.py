@@ -32,8 +32,8 @@ L2WR_DATA = 'l2wr_data'
 generate_id = lambda: str(uuid4())
 
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
-                               Column('scraper_search_id', Integer, ForeignKey(L2WR_DATA + '.scraper_search.id')),
-                               Column('serp_id', Integer, ForeignKey(L2WR_DATA + '.serp.id')),
+                               Column('scraper_search_id', String, ForeignKey(L2WR_DATA + '.scraper_search.id')),
+                               Column('serp_id', String, ForeignKey(L2WR_DATA + '.serp.id')),
                                schema=L2WR_DATA)
 
 
@@ -82,12 +82,12 @@ class SearchEngineResultsPage(Base):
     # Whether we got any results at all. This is the same as len(serp.links)
     num_results = Column(Integer, default=-1)
 
-    query = Column(String)
+    query = Column(String(1024))
 
     # if the query was modified by the search engine because there weren't any
     # results, this variable is set to the query that was used instead.
     # Otherwise it remains empty.
-    effective_query = Column(String, default='')
+    effective_query = Column(String(1024), default='')
 
     # Whether the search engine has no results.
     # This is not the same as num_results, because some search engines
@@ -114,7 +114,7 @@ class SearchEngineResultsPage(Base):
             A parser object.
         """
 
-        self.num_results_for_query = parser.num_results_for_query
+        self.num_results_for_query = str(parser.num_results_for_query)
         self.num_results = parser.num_results
         self.effective_query = str(parser.effective_query)
         self.no_results = parser.no_results
@@ -156,7 +156,7 @@ class SearchEngineResultsPage(Base):
         Args:
             A scraper object.
         """
-
+        self.id = generate_id()
         self.query = scraper.query
         self.search_engine_name = scraper.search_engine_name
         self.scrape_method = scraper.scrape_method
@@ -178,16 +178,16 @@ class Link(Base):
     __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
-    title = Column(String)
-    snippet = Column(String)
-    link = Column(String)
-    domain = Column(String)
-    visible_link = Column(String)
-    actual_link = Column(String)
+    title = Column(String(1024))
+    snippet = Column(String(1024))
+    link = Column(String(4096))
+    domain = Column(String(1024))
+    visible_link = Column(String(2048))
+    actual_link = Column(String(4096))
     rank = Column(Integer)
     link_type = Column(String)
     user = Column(String)
-    profile_url = Column(String)
+    profile_url = Column(String(1024))
     scrape_id = Column(String)
     project_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
