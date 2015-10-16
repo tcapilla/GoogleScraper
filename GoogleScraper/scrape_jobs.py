@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from random import shuffle
 
 logger = logging.getLogger('GoogleScraper')
 
@@ -68,7 +69,10 @@ def default_scrape_jobs_for_keywords(keywords, search_engines, scrape_method, nu
     Returns:
         A dict of scrapejobs.
     """
-    for keyword in keywords:
+    keyword_list = list(keywords)
+    shuffle(keyword_list)
+
+    for keyword in keyword_list:
         for search_engine in search_engines:
             for page in range(1, num_pages + 1):
                 yield {
