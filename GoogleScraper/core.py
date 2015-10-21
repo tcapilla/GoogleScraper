@@ -6,10 +6,12 @@ import sys
 import hashlib
 import os
 import logging
+import pickle
 import queue
+from random import shuffle
 from GoogleScraper.commandline import get_command_line
 from GoogleScraper.database import ScraperSearch, SERP, Link, get_session, fixtures, generate_id
-from GoogleScraper.proxies import parse_proxy_file, get_proxies_from_mysql_db, add_proxies_to_db
+from GoogleScraper.proxies import tuples_to_proxies, parse_proxy_file, get_proxies_from_mysql_db, add_proxies_to_db
 from GoogleScraper.caching import fix_broken_cache_names, _caching_is_one_to_one, parse_all_cached_files, \
     clean_cachefiles
 from GoogleScraper.config import InvalidConfigurationException, parse_cmd_args, Config, update_config_with_file
@@ -198,7 +200,8 @@ def main(return_results=False, parse_cmd_line=True):
     keywords = {keyword for keyword in set(Config['SCRAPING'].get('keywords', []).split('\n')) if keyword}
     proxy_file = Config['GLOBAL'].get('proxy_file', '')
     proxy_db = Config['GLOBAL'].get('mysql_proxy_db', '')
-
+    proxy_tuples = Config['GLOBAL'].get('proxy_tuples', [])
+    
     se = Config['SCRAPING'].get('search_engines', 'google')
     if se.strip() == '*':
         se = Config['SCRAPING'].get('supported_search_engines', 'google')
@@ -278,10 +281,16 @@ def main(return_results=False, parse_cmd_line=True):
 
     proxies = []
 
-    if proxy_db:
+    if proxy_tuples:
+        proxies = tuples_to_proxies(proxy_tuples)
+    elif proxy_db:
         proxies = get_proxies_from_mysql_db(proxy_db)
     elif proxy_file:
         proxies = parse_proxy_file(proxy_file)
+
+    # Randomize proxies
+    shuffle(proxies)
+    print(proxies)
 
     if Config['SCRAPING'].getboolean('use_own_ip'):
         proxies.append(None)
