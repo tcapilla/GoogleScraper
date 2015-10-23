@@ -11,6 +11,24 @@ Proxy = namedtuple('Proxy', 'proto, host, port, username, password')
 logger = logging.getLogger('GoogleScraper')
 
 
+def tuples_to_proxies(proxy_tuples):
+    """
+    Converts tuples containing proxy information to the expected namedtuples.
+    """
+    proxies = []
+    for pt in proxy_tuples:
+        protocol = pt[0]
+        address, port = pt[1].split(':')
+        username = pt[2]
+        password = pt[3]
+        proxies.append(
+            Proxy(proto=protocol,
+                  host=address,
+                  port=port,
+                  username=username,
+                  password=password))
+    return proxies
+    
 def parse_proxy_file(fname):
     """Parses a proxy file
 

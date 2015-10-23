@@ -172,7 +172,10 @@ def update_config(d, target=None):
             Config.add_section(section)
 
         for option, value in mapping.items():
-            Config.set(section, option, str(value))
+            value_new = str(value)
+            if option == 'proxy_tuples':
+                value_new = value
+            Config.set(section, option, value_new)
 
     return Config
 
