@@ -351,7 +351,7 @@ class GoogleParser(Parser):
     page_number_selectors = ['#navcnt td.cur::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'us_ip': {
                 'container': 'div.srg',
                 'result_container': 'div.rc',
@@ -385,7 +385,7 @@ class GoogleParser(Parser):
     }
 
     image_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': 'li#isr_mc',
                 'result_container': 'div.rg_di',
@@ -462,7 +462,7 @@ class YandexParser(Parser):
     page_number_selectors = ['.pager__group .button_checked_yes span::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': 'div.serp-list',
                 'result_container': 'div.serp-item__wrap ',
@@ -475,7 +475,7 @@ class YandexParser(Parser):
     }
 
     image_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '.page-layout__content-wrapper',
                 'result_container': '.serp-item__preview',
@@ -545,7 +545,7 @@ class BingParser(Parser):
     page_number_selectors = ['.sb_pagS::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'us_ip': {
                 'container': '#b_results',
                 'result_container': '.b_algo',
@@ -591,7 +591,7 @@ class BingParser(Parser):
     }
 
     image_search_selectors = {
-        'results': {
+        'organic': {
             'ch_ip': {
                 'container': '#dg_c .imgres',
                 'result_container': '.dg_u',
@@ -649,7 +649,7 @@ class YahooParser(Parser):
     page_number_selectors = ['#pg > strong::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '#main',
                 'result_container': '.res',
@@ -662,7 +662,7 @@ class YahooParser(Parser):
     }
 
     image_search_selectors = {
-        'results': {
+        'organic': {
             'ch_ip': {
                 'container': '#results',
                 'result_container': '#sres > li',
@@ -735,7 +735,7 @@ class BaiduParser(Parser):
     page_number_selectors = ['.fk_cur + .pc::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '#content_left',
                 'result_container': '.result-op',
@@ -756,7 +756,7 @@ class BaiduParser(Parser):
     }
 
     image_search_selectors = {
-        'results': {
+        'organic': {
             'ch_ip': {
                 'container': '#imgContainer',
                 'result_container': '.pageCon > li',
@@ -811,7 +811,7 @@ class DuckduckgoParser(Parser):
     page_number_selectors = ['']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '#links',
                 'result_container': '.result',
@@ -859,7 +859,7 @@ class AskParser(Parser):
     page_number_selectors = ['.pgcsel .pg::text']
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '#midblock',
                 'result_container': '.ptbs.ur',
@@ -886,7 +886,7 @@ class BlekkoParser(Parser):
     num_results_search_selectors = []
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'de_ip': {
                 'container': '#links',
                 'result_container': '.result',
@@ -912,7 +912,7 @@ class YouTubeParser(Parser):
     num_results_search_selectors = []
 
     normal_search_selectors = {
-        'results': {
+        'organic': {
             'us_ip': {
                 'container': '#result', 
                 'result_container': 'yt-lockup-content',
