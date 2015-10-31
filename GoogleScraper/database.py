@@ -138,7 +138,7 @@ class SearchEngineResultsPage(Base):
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
                         rank=link.get('rank'),
-                        visibility_subscore=31 - link.get('visibility_subscore'),
+                        visibility_subscore=31 - link.get('rank'),
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
                         project_id=Config['SCRAPE_INFOS'].get('project_id'),
                         serp=self,
