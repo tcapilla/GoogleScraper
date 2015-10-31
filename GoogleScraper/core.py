@@ -290,7 +290,6 @@ def main(return_results=False, parse_cmd_line=True):
 
     # Randomize proxies
     shuffle(proxies)
-    print(proxies)
 
     if Config['SCRAPING'].getboolean('use_own_ip'):
         proxies.append(None)
@@ -399,7 +398,6 @@ def main(return_results=False, parse_cmd_line=True):
             for search_engine in search_engines:
 
                 for proxy in proxies:
-
                     for worker in range(num_workers):
                         num_worker += 1
                         workers.put(
@@ -466,7 +464,6 @@ def main(return_results=False, parse_cmd_line=True):
         outfile.end()
 
     scraper_search.stopped_searching = datetime.datetime.utcnow()
-
     session.add(scraper_search)
     session.commit()
 
