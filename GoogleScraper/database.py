@@ -138,7 +138,7 @@ class SearchEngineResultsPage(Base):
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
                         rank=link.get('rank'),
-                        visibility_subscore=self.num_results - link.get('rank') + 1,
+                        visibility_points=self.num_results - link.get('rank') + 1,
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
                         project_id=Config['SCRAPE_INFOS'].get('project_id'),
                         serp=self,
@@ -186,7 +186,7 @@ class Link(Base):
     visible_link = Column(String(2048))
     actual_link = Column(String(4096))
     rank = Column(Integer)
-    visibility_subscore = Column(Integer)
+    visibility_points = Column(Integer)
     link_type = Column(String)
     user = Column(String)
     profile_url = Column(String(1024))
