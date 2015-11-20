@@ -288,20 +288,20 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         else:
             self.parser = None
 
-        with self.db_lock:
+        #with self.db_lock:
 
-            serp = parse_serp(parser=self.parser, scraper=self, query=self.query)
+        serp = parse_serp(parser=self.parser, scraper=self, query=self.query)
 
-            self.scraper_search.serps.append(serp)
-            self.session.add(serp)
-            self.session.commit()
+        self.scraper_search.serps.append(serp)
+        self.session.add(serp)
+        self.session.commit()
 
-            store_serp_result(serp)
+        store_serp_result(serp)
 
-            if serp.num_results:
-                return True
-            else:
-                return False
+        if serp.num_results:
+            return True
+        else:
+            return False
 
     def next_page(self):
         """Increment the page. The next search request will request the next page."""
@@ -390,19 +390,19 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         """
         ipinfo = ipinfo or {}
 
-        with self.db_lock:
+        #with self.db_lock:
 
-            proxy = self.session.query(db_Proxy).filter(self.proxy.host == db_Proxy.ip).first()
-            if proxy:
-                for key in ipinfo.keys():
-                    setattr(proxy, key, ipinfo[key])
+        proxy = self.session.query(db_Proxy).filter(self.proxy.host == db_Proxy.ip).first()
+        if proxy:
+            for key in ipinfo.keys():
+                setattr(proxy, key, ipinfo[key])
 
-                proxy.checked_at = datetime.datetime.utcnow()
-                proxy.status = status
-                proxy.online = online
+            proxy.checked_at = datetime.datetime.utcnow()
+            proxy.status = status
+            proxy.online = online
 
-                self.session.add(proxy)
-                self.session.commit()
+            self.session.add(proxy)
+            self.session.commit()
 
 
 from GoogleScraper.http_mode import HttpScrape

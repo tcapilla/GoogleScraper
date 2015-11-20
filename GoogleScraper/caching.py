@@ -297,8 +297,8 @@ def cache_results(parser, query, search_engine, scrape_mode, page_number, db_loc
         db_lock: If an db_lock is given, all action are wrapped in this lock.
     """
 
-    if db_lock:
-        db_lock.acquire()
+    # if db_lock:
+    #     db_lock.acquire()
 
     if Config['GLOBAL'].getboolean('minimize_caching_files', True):
         html = parser.cleaned_html
@@ -320,8 +320,8 @@ def cache_results(parser, query, search_engine, scrape_mode, page_number, db_loc
             else:
                 fd.write(html)
 
-    if db_lock:
-        db_lock.release()
+    # if db_lock:
+    #     db_lock.release()
 
 
 def _get_all_cache_files():
