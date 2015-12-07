@@ -48,7 +48,7 @@ class S3Table:
         
     def load_data(self, session):
         records = session.query(self._table_obj).all()
-        self._write.writerow([ column.name for column in self._table_obj.__mapper__.columns ])
+        self._writer.writerow([ column.name for column in self._table_obj.__mapper__.columns ])
         for rec in records:
-            self._write.writerow([ getattr(rec, column.name)
-                                   for column in self._table_obj.__mapper__.columns ])
+            self._writer.writerow([ getattr(rec, column.name)
+                                    for column in self._table_obj.__mapper__.columns ])
