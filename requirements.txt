@@ -6,3 +6,4 @@ PyMySql
 sqlalchemy
 aiohttp
 # redis
+tinys3==0.1.11
