@@ -23,7 +23,7 @@ class S3Table:
         ##
         self._tablename = table_obj.__tablename__
         self._table_file = '{0}-{1}.csv'.format(self._tablename, self._scrape_id)
-        self._manifest_file = 'l2wr_{0}_{1}_manifest'.format(self.tablename,
+        self._manifest_file = 'l2wr_{0}_{1}_manifest'.format(self._tablename,
                                                              self._scrape_id)
         ##
         self._buffer = StringIO()
