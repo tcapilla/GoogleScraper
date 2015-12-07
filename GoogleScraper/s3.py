@@ -3,6 +3,7 @@
 import csv
 from io import BytesIO, StringIO
 import json
+import os
 
 import tinys3
 
@@ -42,13 +43,17 @@ class S3Table:
         conn = tinys3.Connection(self.amazon_web_services_access_key,
                                  self.amazon_web_services_secret_key)
         content = BytesIO(self._buffer.getvalue().encode('utf-8'))
-        conn.upload(self._manifest_file, content, SCRAPER_TO_LOAD)
+        conn.upload(os.path.join(SCRAPER_TO_LOAD, self._table_file),
+                    content,
+                    self.ravana_s3_bucket)
 
         manifest_content = BytesIO(StringIO(json.dumps(
             {"entries": [{"url": "s3://{0}/{1}".format(
                 self.ravana_s3_bucket,
                 self._table_file)}]}).getvalue().encode('utf-8')))
-        conn.upload(self._manifest_file, manifest_content, SCRAPER_TO_LOAD)
+        conn.upload(os.path.join(SCRAPER_TO_LOAD, self._manifest_file),
+                    manifest_content,
+                    self.ravana_s3_bucket)
 
         
     def load_data(self, session):
