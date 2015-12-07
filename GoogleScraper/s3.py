@@ -21,7 +21,7 @@ class S3Table:
         self._scrape_id = scrape_id
         self._env = env
         ##
-        self.ravana_s3_bucketamazon_web_services_access_key = self._env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
+        self.amazon_web_services_access_key = self._env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
         self.amazon_web_services_secret_key = self._env.get('AMAZON_WEB_SERVICES_SECRET_KEY')
         self.ravana_s3_bucket = self._env.get('RAVANA_S3_BUCKET')
 
