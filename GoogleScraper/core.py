@@ -10,7 +10,7 @@ import pickle
 import queue
 from random import shuffle
 from GoogleScraper.commandline import get_command_line
-from GoogleScraper.database import ScraperSearch, SERP, Link, get_session, fixtures, generate_id
+from GoogleScraper.database import ScraperSearch, SERP, Link, Proxy, SearchEngine, SearchEngineProxyStatus, get_session, fixtures, generate_id
 from GoogleScraper.proxies import tuples_to_proxies, parse_proxy_file, get_proxies_from_mysql_db, add_proxies_to_db
 from GoogleScraper.caching import fix_broken_cache_names, _caching_is_one_to_one, parse_all_cached_files, \
     clean_cachefiles
@@ -467,5 +467,15 @@ def main(return_results=False, parse_cmd_line=True):
     session.add(scraper_search)
     session.commit()
 
+    ## Copy data to S3
+    table_objs = [ScraperSearch, SERP, Link, Proxy, SearchEngine, SearchEngineProxyStatus]
+    s3writers = [ S3Table(to, Config['SCRAPE_INFOS'].get('scrape_id'), Config['ENV'])
+                  for to in table_objs ]
+    for w in s3writers:
+        w.load_data(session)
+    for w in s3writers:
+        w.write_buffer_to_s3()
+
+    ##
     if return_results:
         return scraper_search

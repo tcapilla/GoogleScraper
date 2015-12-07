@@ -23,23 +23,21 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine, UniqueConstraint
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+import sqlite3
+
 from uuid import uuid4
 
 Base = declarative_base()
 
-L2WR_DATA = 'l2wr_data'
-
 generate_id = lambda: str(uuid4())
 
 scraper_searches_serps = Table('scraper_searches_serps', Base.metadata,
-                               Column('scraper_search_id', String, ForeignKey(L2WR_DATA + '.scraper_search.id')),
-                               Column('serp_id', String, ForeignKey(L2WR_DATA + '.serp.id')),
-                               schema=L2WR_DATA)
+                               Column('scraper_search_id', String, ForeignKey('scraper_search.id')),
+                               Column('serp_id', String, ForeignKey('serp.id')))
 
 
 class ScraperSearch(Base):
     __tablename__ = 'scraper_search'
-    __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
     keyword_file = Column(String)
@@ -66,7 +64,6 @@ class ScraperSearch(Base):
 
 class SearchEngineResultsPage(Base):
     __tablename__ = 'serp'
-    __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
     status = Column(String, default='successful')
@@ -175,7 +172,6 @@ SERP = SearchEngineResultsPage
 
 class Link(Base):
     __tablename__ = 'link'
-    __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
     title = Column(String(1024))
@@ -192,7 +188,7 @@ class Link(Base):
     project_id = Column(String)
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
-    serp_id = Column(String, ForeignKey(L2WR_DATA + '.serp.id'))
+    serp_id = Column(String, ForeignKey('serp.id'))
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
 
     def __str__(self):
@@ -204,7 +200,6 @@ class Link(Base):
 
 class Proxy(Base):
     __tablename__ = 'proxy'
-    __table_args__ = {'schema' : L2WR_DATA}
 
     id = Column(String, primary_key=True, autoincrement=False)
     ip = Column(String)
@@ -240,7 +235,6 @@ db_Proxy = Proxy
 
 class SearchEngine(Base):
     __tablename__ = 'search_engine'
-    __table_args__ = {'schema' : L2WR_DATA}
     
     id = Column(String, primary_key=True, autoincrement=False)
     name = Column(String, unique=False)
@@ -256,11 +250,10 @@ class SearchEngineProxyStatus(Base):
     """
 
     __tablename__ = 'search_engine_proxy_status'
-    __table_args__ = {'schema' : L2WR_DATA}
     
     id = Column(String, primary_key=True, autoincrement=False)
-    proxy_id = Column(String, ForeignKey(L2WR_DATA + '.proxy.id'))
-    search_engine_id = Column(String, ForeignKey(L2WR_DATA + '.search_engine.id'))
+    proxy_id = Column(String, ForeignKey('proxy.id'))
+    search_engine_id = Column(String, ForeignKey('search_engine.id'))
     available = Column(Boolean)
     last_check = Column(DateTime)
 
@@ -274,18 +267,12 @@ def get_engine(path=None):
     Returns:
         The sqlalchemy engine.
     """
-    db_path = path if path else Config['OUTPUT'].get('database_name', 'google_scraper') + '.db'
     echo = True if (Config['GLOBAL'].getint('verbosity', 0) >= 4) else False
-    
-    #engine = create_engine('sqlite:///' + db_path, echo=echo, connect_args={'check_same_thread': False})
-    #db_path = "admin:S@2vTeGY#u@l2-redshift-dev.crmiksnn0eqd.us-east-1.redshift.amazonaws.com:5439/hypercube"
-    db_path = ("%s:%s@%s:%s/%s" % (Config['ENV'].get('HYPERCUBE_REDSHIFT_USERNAME').replace("'", ""),
-                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PASSWORD').replace("'", ""),
-                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_HOST'),
-                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_PORT'),
-                                   Config['ENV'].get('HYPERCUBE_REDSHIFT_DATABASE')))
-    engine = create_engine('postgresql://' + db_path, echo=echo)
+    creator = lambda: sqlite3.connect('file::memory:?cache=shared&echo={0}'.format(echo),
+                                      uri=True,
+                                      check_same_thread=False)
 
+    engine = create_engine('sqlite://', creator=creator)
     Base.metadata.create_all(engine)
 
     return engine
