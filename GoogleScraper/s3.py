@@ -11,8 +11,10 @@ import tinys3
 ### 
 ### 
 
-SCRAPER_TO_LOAD='scraper_to_load'
-
+SCRAPER_TO_LOAD = 'scraper_to_load'
+AMAZON_WEB_SERVICES_ACCESS_KEY = self._env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
+AMAZON_WEB_SERVICES_SECRET_KEY = self._env.get('AMAZON_WEB_SERVICES_SECRET_KEY')
+RAVANA_S3_BUCKET = self._env.get('RAVANA_S3_BUCKET')
 
 class S3Table:
     
@@ -34,14 +36,14 @@ class S3Table:
 
         
     def write_buffer_to_s3(self):
-        conn = tinys3.Connection(self._env.AMAZON_WEB_SERVICES_ACCESS_KEY,
-                                 self._env.AMAZON_WEB_SERVICES_SECRET_KEY)
+        conn = tinys3.Connection(AMAZON_WEB_SERVICES_ACCESS_KEY,
+                                 AMAZON_WEB_SERVICES_SECRET_KEY)
         content = BytesIO(self._buffer.getvalue().encode('utf-8'))
         conn.upload(self._manifest_file, content, SCRAPER_TO_LOAD)
 
         manifest_content = BytesIO(StringIO(json.dumps(
             {"entries": [{"url": "s3://{0}/{1}".format(
-                self._env.RAVANA_S3_BUCKET,
+                RAVANA_S3_BUCKET,
                 self._table_file)}]}).getvalue().encode('utf-8')))
         conn.upload(self._manifest_file, manifest_content, SCRAPER_TO_LOAD)
 
