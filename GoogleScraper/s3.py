@@ -48,8 +48,9 @@ class S3Table:
                     self.ravana_s3_bucket)
 
         manifest_content = BytesIO(StringIO(json.dumps(
-            {"entries": [{"url": "s3://{0}/{1}".format(
+            {"entries": [{"url": "s3://{0}/{1}/{2}".format(
                 self.ravana_s3_bucket,
+                SCRAPER_TO_LOAD,
                 self._table_file)}]}).getvalue().encode('utf-8')))
         conn.upload(os.path.join(SCRAPER_TO_LOAD, self._manifest_file),
                     manifest_content,
