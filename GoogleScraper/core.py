@@ -21,6 +21,7 @@ from GoogleScraper.scraping import ScrapeWorkerFactory
 from GoogleScraper.output_converter import init_outfile
 from GoogleScraper.async_mode import AsyncScrapeScheduler
 import GoogleScraper.config
+from GoogleScraper.s3 import S3Table
 
 logger = logging.getLogger('GoogleScraper')
 
