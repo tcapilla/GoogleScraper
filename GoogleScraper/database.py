@@ -101,6 +101,14 @@ class SearchEngineResultsPage(Base):
     def __repr__(self):
         return self.__str__()
 
+    def _strip_delimiter(self, value):
+        # Delimiter (stripped here) should be kept in conf? Used by Ravana also. -dmatysiak
+        delimiter = '\t'
+        replacement_char = ' '
+        if isinstance(value, str):
+            return value.replace(delimiter, replacement_char)
+        return value
+    
     def has_no_results_for_query(self):
         return self.num_results == 0 or self.effective_query
 
@@ -111,7 +119,7 @@ class SearchEngineResultsPage(Base):
             A parser object.
         """
 
-        self.num_results_for_query = str(parser.num_results_for_query).replace('\t', ' ') # conf me, bro
+        self.num_results_for_query = self._strip_delimiter(str(parser.num_results_for_query))
         self.num_results = parser.num_results
         self.effective_query = str(parser.effective_query)
         self.no_results = parser.no_results
@@ -123,14 +131,14 @@ class SearchEngineResultsPage(Base):
 
                     # fill with nones to prevent key errors
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
-                    # Delimiter (stripped here) should be kept in conf? Used by Ravana also. -dmatysiak
+
                     Link(
                         id=generate_id(),
-                        link=link.get('link').replace('\t', ' '), # doesn't hurt
-                        snippet=link.get('snippet').replace('\t', ' '),
-                        title=link.get('title').replace('\t', ' '),
-                        visible_link=link.get('visible_link').replace('\t', ' '),
-                        actual_link=link.get('link').replace('\t', ' '),
+                        link=self._strip_delimiter(link.get('link')),
+                        snippet=self._strip_delimiter(link.get('snippet')),
+                        title=self._strip_delimiter(link.get('title')),
+                        visible_link=self._strip_delimiter(link.get('visible_link')),
+                        actual_link=self._strip_delimiter(link.get('link')),
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
