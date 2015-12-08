@@ -13,6 +13,7 @@ import tinys3
 ### 
 
 SCRAPER_TO_LOAD = 'scraper_to_load'
+NULL_STRING='null_string'
 
 
 class S3Table:
@@ -36,6 +37,13 @@ class S3Table:
         self._writer = csv.writer(self._buffer,
                                   delimiter='\t')
 
+
+    def _None_to_string(self, value):
+        if value is None:
+            return NULL_STRING
+        else:
+            return value
+        
         
     def write_buffer_to_s3(self):
         conn = tinys3.Connection(self.amazon_web_services_access_key,
@@ -59,5 +67,6 @@ class S3Table:
         records = session.query(self._table_obj).all()
         #self._writer.writerow([ column.name for column in self._table_obj.__mapper__.columns ])
         for rec in records:
-            self._writer.writerow([ getattr(rec, column.name)
-                                    for column in self._table_obj.__mapper__.columns ])
+            self._writer.writerow(map(self._None_to_string,
+                                      [ getattr(rec, column.name)
+                                        for column in self._table_obj.__mapper__.columns ]))
