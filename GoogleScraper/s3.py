@@ -34,7 +34,7 @@ class S3Table:
         ##
         self._buffer = StringIO()
         self._writer = csv.writer(self._buffer,
-                                  delimiter='|')
+                                  delimiter='\t')
 
         
     def write_buffer_to_s3(self):
