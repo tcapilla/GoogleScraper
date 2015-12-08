@@ -111,7 +111,7 @@ class SearchEngineResultsPage(Base):
             A parser object.
         """
 
-        self.num_results_for_query = str(parser.num_results_for_query)
+        self.num_results_for_query = str(parser.num_results_for_query).replace('\t', ' ') # conf me, bro
         self.num_results = parser.num_results
         self.effective_query = str(parser.effective_query)
         self.no_results = parser.no_results
@@ -123,14 +123,14 @@ class SearchEngineResultsPage(Base):
 
                     # fill with nones to prevent key errors
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
-
+                    # Delimiter (stripped here) should be kept in conf? Used by Ravana also. -dmatysiak
                     Link(
                         id=generate_id(),
-                        link=link.get('link'),
-                        snippet=link.get('snippet'),
-                        title=link.get('title'),
-                        visible_link=link.get('visible_link'),
-                        actual_link=link.get('link'),
+                        link=link.get('link').replace('\t', ' '), # doesn't hurt
+                        snippet=link.get('snippet').replace('\t', ' '),
+                        title=link.get('title').replace('\t', ' '),
+                        visible_link=link.get('visible_link').replace('\t', ' '),
+                        actual_link=link.get('link').replace('\t', ' '),
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
