@@ -34,10 +34,8 @@ class S3Table:
         ##
         self._buffer = StringIO()
         self._writer = csv.writer(self._buffer,
-                                  encoding='utf-8',
                                   delimiter=',',
-                                  quotechar='"',
-                                  quoting=csv.QUOTE_MINIMAL)
+                                  quotechar='"')
 
         
     def write_buffer_to_s3(self):
