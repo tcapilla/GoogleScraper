@@ -67,6 +67,5 @@ class S3Table:
         records = session.query(self._table_obj).all()
         #self._writer.writerow([ column.name for column in self._table_obj.__mapper__.columns ])
         for rec in records:
-            self._writer.writerow(map(self._None_to_string,
-                                      [ getattr(rec, column.name)
-                                        for column in self._table_obj.__mapper__.columns ]))
+            self._writer.writerow([ self._None_to_string(getattr(rec, column.name))
+                                    for column in self._table_obj.__mapper__.columns ])
