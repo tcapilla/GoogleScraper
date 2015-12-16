@@ -735,15 +735,7 @@ class BaiduParser(Parser):
 
     normal_search_selectors = {
         'organic': {
-            'de_ip': {
-                'container': '#content_left',
-                'result_container': '.result-op',
-                'link': 'h3 > a.t::attr(href)',
-                'snippet': '.c-abstract::text',
-                'title': 'h3 > a.t::text',
-                'visible_link': 'span.c-showurl::text'
-            },
-            'nojs': {
+            'us_ip': {
                 'container': '#content_left',
                 'result_container': '.result',
                 'link': 'h3 > a::attr(href)',
@@ -752,15 +744,15 @@ class BaiduParser(Parser):
                 'visible_link': 'span.g::text'
             }
         },
-    }
-
-    image_search_selectors = {
-        'organic': {
-            'ch_ip': {
-                'container': '#imgContainer',
-                'result_container': '.pageCon > li',
-                'link': '.imgShow a::attr(href)'
-            },
+        'brand_zone': {
+            'us_ip': {
+                'container': '#content_left',
+                'result_container': 'div:nth-child(2)>div>div>div>div',
+                'link': 'div > a::attr(href)',
+                'snippet': 'div > div',
+                'title': 'h2 > a::text',
+                'visible_link': 'div > div > div'
+            }
         }
     }
 
