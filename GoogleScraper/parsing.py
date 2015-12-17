@@ -353,8 +353,10 @@ class GoogleParser(Parser):
     normal_search_selectors = {
         'organic': {
             'us_ip': {
-                'container': '#center_col',
-                'result_container': 'div.g ',
+                'container': 'div.srg',
+                'result_container': 'div.rc',
+                #'container': '#center_col',  <-- pernicious selectors...
+                #'result_container': 'div.g ',  
                 'link': 'h3.r > a:first-child::attr(href)',
                 'snippet': 'div.s span.st::text',
                 'title': 'h3.r > a:first-child::text',
