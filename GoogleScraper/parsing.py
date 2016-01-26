@@ -737,33 +737,25 @@ class BaiduParser(Parser):
 
     normal_search_selectors = {
         'organic': {
-            'de_ip': {
-                'container': '#content_left',
-                'result_container': '.result-op',
-                'link': 'h3 > a.t::attr(href)',
-                'snippet': '.c-abstract::text',
-                'title': 'h3 > a.t::text',
-                'visible_link': 'span.c-showurl::text'
-            },
             'nojs': {
                 'container': '#content_left',
                 'result_container': '.result',
                 'link': 'h3 > a::attr(href)',
                 'snippet': '.c-abstract::text',
                 'title': 'h3 > a::text',
-                'visible_link': 'span.g::text'
+                'visible_link': 'a.c-showurl::text'
             }
         },
-    }
-
-    image_search_selectors = {
-        'organic': {
-            'ch_ip': {
-                'container': '#imgContainer',
-                'result_container': '.pageCon > li',
-                'link': '.imgShow a::attr(href)'
-            },
-        }
+        # 'brand_zone': {
+        #     'nojs': {
+        #         'container': '#content_left',
+        #         'result_container': '',
+        #         'link': 'h2 > a::attr(href)',
+        #         'snippet': '',
+        #         'title': 'h2 > a::text',
+        #         'visible_link': ''
+        #     }
+        # }
     }
 
     def __init__(self, *args, **kwargs):
@@ -780,20 +772,20 @@ class BaiduParser(Parser):
         """
         super().after_parsing()
 
+        # Extract the domain from the visible link since Baidu
+        # always redirects through its own domain.
+        for key, i in self.iter_serp_items():
+            self.search_results[key][i]['visible_link'] = str.strip(self.search_results[key][i]['visible_link'])
+            self.search_results[key][i]['link'] = 'http://' + self.search_results[key][i]['visible_link']
+        
         if self.search_engine == 'normal':
             if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
                 self.no_results = True
 
-        if self.searchtype == 'image':
             for key, i in self.iter_serp_items():
-                for regex in (
-                        r'&objurl=(?P<url>.*?)&',
-                ):
-                    result = re.search(regex, self.search_results[key][i]['link'])
-                    if result:
-                        self.search_results[key][i]['link'] = unquote(result.group('url'))
-                        break
-
+                if self.search_results[key][i]['visible_link'] is None:
+                    del self.search_results[key][i]
+                
 
 class DuckduckgoParser(Parser):
     """Parses SERP pages of the Duckduckgo search engine."""
