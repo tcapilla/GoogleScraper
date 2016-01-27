@@ -106,7 +106,7 @@ class SearchEngineResultsPage(Base):
         delimiter = '\t'
         replacement_char = ' '
         if isinstance(value, str):
-            return value.replace(delimiter, replacement_char)
+            return value.replace(delimiter, replacement_char).replace('\n', replacement_char)
         return value
     
     def has_no_results_for_query(self):
