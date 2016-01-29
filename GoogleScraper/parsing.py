@@ -775,8 +775,13 @@ class BaiduParser(Parser):
         # Extract the domain from the visible link since Baidu always
         # redirects through its own domain.
         for key, i in self.iter_serp_items():
-            self.search_results[key][i]['visible_link'] = str.strip(self.search_results[key][i]['visible_link'])
-            self.search_results[key][i]['link'] = 'http://' + self.search_results[key][i]['visible_link']
+            vlink = str.strip(self.search_results[key][i]['visible_link'])
+            try:
+                vlink = vlink.split()[0]
+            except:
+                pass
+            self.search_results[key][i]['visible_link'] = vlink
+            self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
         
         if self.search_engine == 'normal':
             if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
