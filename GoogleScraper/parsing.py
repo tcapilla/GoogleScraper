@@ -780,7 +780,7 @@ class BaiduParser(Parser):
                 vlink = vlink.split()[0]
             except:
                 pass
-            self.search_results[key][i]['visible_link'] = vlink
+            self.search_results[key][i]['visible_link'] = 'http://' + vlink
             self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
         
         if self.search_engine == 'normal':
