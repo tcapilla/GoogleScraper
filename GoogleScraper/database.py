@@ -109,6 +109,11 @@ class SearchEngineResultsPage(Base):
             return value.replace(delimiter, replacement_char).replace('\n', replacement_char)
         return value
     
+    def _strip_protocol(self, value):
+        if isinstance(value, str):
+            return value.replace('http://', '').replace('https://', '')
+        return value
+    
     def has_no_results_for_query(self):
         return self.num_results == 0 or self.effective_query
 
@@ -132,13 +137,16 @@ class SearchEngineResultsPage(Base):
                     # fill with nones to prevent key errors
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
 
+                    visibility_link = self._strip_protocol(self._strip_delimiter(link.get('visible_link')))
+                    actual_link = self._strip_protocol(self._strip_delimiter(link.get('link')))
+                    
                     Link(
                         id=generate_id(),
                         link=self._strip_delimiter(link.get('link')),
                         snippet=self._strip_delimiter(link.get('snippet')),
                         title=self._strip_delimiter(link.get('title')),
-                        visible_link=self._strip_delimiter(link.get('visible_link')),
-                        actual_link=self._strip_delimiter(link.get('link')),
+                        visible_link=visibility_link,
+                        actual_link=actual_link,
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
