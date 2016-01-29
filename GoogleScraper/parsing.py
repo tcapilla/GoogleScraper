@@ -746,16 +746,16 @@ class BaiduParser(Parser):
                 'visible_link': 'a.c-showurl::text'
             }
         },
-        # 'brand_zone': {
-        #     'nojs': {
-        #         'container': '#content_left',
-        #         'result_container': '',
-        #         'link': 'h2 > a::attr(href)',
-        #         'snippet': '',
-        #         'title': 'h2 > a::text',
-        #         'visible_link': ''
-        #     }
-        # }
+        'brand_zone': {
+            'nojs': {
+                'container': '#content_left',
+                'result_container': 'div[class$="-0-0"]',
+                'link': 'a[class$="-header-title"]::attr(href)',
+                'snippet': 'div[id$="-description"]::text',
+                'title': 'a[class$="-header-title"]::text',
+                'visible_link': 'div[class$="-site"]::text'
+            }  
+        },
     }
 
     def __init__(self, *args, **kwargs):
@@ -772,8 +772,8 @@ class BaiduParser(Parser):
         """
         super().after_parsing()
 
-        # Extract the domain from the visible link since Baidu
-        # always redirects through its own domain.
+        # Extract the domain from the visible link since Baidu always
+        # redirects through its own domain.
         for key, i in self.iter_serp_items():
             self.search_results[key][i]['visible_link'] = str.strip(self.search_results[key][i]['visible_link'])
             self.search_results[key][i]['link'] = 'http://' + self.search_results[key][i]['visible_link']
