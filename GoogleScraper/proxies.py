@@ -56,7 +56,7 @@ def parse_proxy_file(fname):
         with open(path, 'r') as pf:
             for line in pf.readlines():
                 if not (line.strip().startswith('#') or line.strip().startswith('//')):
-                    tokens = line.replace('\n', '').split(' ')
+                    tokens = list(filter(lambda x: len(x) > 0, line.replace('\n', '').split(' ')))
                     try:
                         proto = tokens[0]
                         host, port = tokens[1].split(':')

@@ -270,15 +270,31 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
         self.build_search()
 
         if rand:
+            # Add desktop and mobile keyward args. -dmatysiak
             self.headers['User-Agent'] = random.choice(user_agents)
 
         try:
             super().detection_prevention_sleep()
             super().keyword_info()
 
-            request = self.requests.get(self.base_search_url + urlencode(self.search_params),
-                                        headers=self.headers, timeout=timeout)
+            proxies = {}
+            if self.proxy:
+                if self.proxy.username:
+                    proxy_base_url = "{username}:{password}@{host}:{port}".format(username=self.proxy.username,
+                                                                                  password=self.proxy.password,
+                                                                                  host=self.proxy.host,
+                                                                                  port=self.proxy.port)
+                else:
+                    proxy_base_url = "{host}:{port}".format(host=self.proxy.host,
+                                                            port=self.proxy.port)
 
+                proxies = {"http": "{proto}://{base_url}".format(proto='http', base_url=proxy_base_url),
+                           "https": "{proto}://{base_url}".format(proto='https', base_url=proxy_base_url)}
+
+            request = self.requests.get(self.base_search_url + urlencode(self.search_params),
+                                        headers=self.headers, timeout=timeout,
+                                        proxies=proxies)
+            
             self.requested_at = datetime.datetime.utcnow()
             self.html = request.text
 
