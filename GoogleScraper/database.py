@@ -176,7 +176,7 @@ class SearchEngineResultsPage(Base):
         self.page_number = scraper.page_number
         self.requested_at = scraper.requested_at
         self.requested_by = scraper.requested_by
-        self.status = scraper.status
+        self.status = scraper.status[:253] + "..."
 
     def was_correctly_requested(self):
         return self.status == 'successful'
