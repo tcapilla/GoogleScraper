@@ -795,7 +795,7 @@ class BaiduParser(Parser):
         # Extract the domain from the visible link since Baidu always
         # redirects through its own domain.
         for key, i in self.iter_serp_items():
-            if vlink:
+            if self.search_results[key][i]['visible_link']:
                 vlink = str.strip(self.search_results[key][i]['visible_link'])
                 try:
                     vlink = vlink.split()[0]
