@@ -756,6 +756,26 @@ class BaiduParser(Parser):
                 'visible_link': 'div[class$="-site"]::text'
             }  
         },
+        'brand_zone_side': {
+            'nojs': {
+                'container': 'td[align="left"] > div:first-child',
+                'result_container': 'div:nth-child(3) > div:nth-child(1)',
+                'link': 'div:nth-child(1) a::attr(href)',
+                'snippet': 'div:nth-child(3) a::text',
+                'title': 'div:nth-child(1) a::text',
+                'visible_link': 'div:nth-child(5) a::text'
+            }
+        },
+        'ads_side': {
+            'nojs': {
+                'container': '#ec_im_container',
+                'result_container': 'div[id^="bdfs"]',
+                'link': 'a[id^="dfs"]::attr(href)',
+                'snippet': 'a[id^="bdfs"]::text',
+                'title': 'a[id^="dfs"]::text',
+                'visible_link': 'a[id^="bdfs"] > font:last-child'
+            }
+        },
     }
 
     def __init__(self, *args, **kwargs):
