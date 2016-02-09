@@ -800,6 +800,7 @@ class BaiduParser(Parser):
                         self.search_results[key][i]['snippet'],
                         self.search_results[key][i]['visible_link']]):
                 del self.search_results[key][i]
+                continue
                 
             if self.search_results[key][i]['visible_link']:
                 vlink = str.strip(self.search_results[key][i]['visible_link'])
