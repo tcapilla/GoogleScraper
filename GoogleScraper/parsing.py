@@ -1108,9 +1108,9 @@ def get_domain_if_present(domain_str):
     irregularities in fucking Baidu search results).
 
     """
-    m = re.search("https?:\/\/[\w\.]+", domain_str)
+    m = re.search("(?P<url>https?://[^\s]+)", domain_str)
     if m:
-        return m.group()
+        return m.group("url")
 
 
 if __name__ == '__main__':
