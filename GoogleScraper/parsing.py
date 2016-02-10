@@ -809,7 +809,6 @@ class BaiduParser(Parser):
                 except:
                     pass
                 self.search_results[key][i]['visible_link'] = 'http://' + vlink
-                self.search_results[key][i]['visible_link'] = get_domain_if_present(self.search_results[key][i]['visible_link'])
                 self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
                 
         
