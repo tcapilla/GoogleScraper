@@ -809,7 +809,9 @@ class BaiduParser(Parser):
                 except:
                     pass
                 self.search_results[key][i]['visible_link'] = 'http://' + vlink
+                self.search_results[key][i]['visible_link'] = get_domain_if_present(self.search_results[key][i]['visible_link'])
                 self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
+                
         
         if self.search_engine == 'normal':
             if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
@@ -1098,6 +1100,18 @@ def parse_serp(html=None, parser=None, scraper=None, search_engine=None, query='
         serp.set_values_from_scraper(scraper)
 
     return serp
+
+
+def get_domain_if_present(domain_str):
+    """Extracts the domain name. This functions assumed the extracted
+    domain is valid. Under that assumption, it tries to slice out the
+    largest string that could be the domain (motivated by
+    irregularities in fucking Baidu search results).
+
+    """
+    m = re.search("https?:\/\/[\w\.]+", domain_str)
+    if m:
+        return m.group()
 
 
 if __name__ == '__main__':
