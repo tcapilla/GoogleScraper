@@ -739,11 +739,11 @@ class BaiduParser(Parser):
         'organic': {
             'nojs': {
                 'container': '#content_left',
-                'result_container': '.result',
+                'result_container': '.c-container',
                 'link': 'h3 > a::attr(href)',
                 'snippet': '.c-abstract::text',
                 'title': 'h3 > a::text',
-                'visible_link': 'a.c-showurl::text'
+                'visible_link': '.c-showurl::text'
             }
         },
         'brand_zone': {
@@ -776,6 +776,37 @@ class BaiduParser(Parser):
                 'visible_link': 'a[id^="bdfs"] > font:last-child'
             }
         },
+        'promo_ads_side': {
+            'nojs': {
+                'container': '.ad-widget',
+                'result_container': '.ec-figcaption',
+                'link': 'h2 > a::attr(href)',
+                'snippet': '.ec-description-link',
+                'title': 'h2 > a::text',
+                'visible_link': '.ec-footer::text'
+            }
+        },
+        'ads_bottom': {
+            'nojs': {
+                'container': '#content_left',
+                'result_container': '#5001',
+                'link': 'h3 > a::attr(href)',
+                'snippet': 'div > a::text',
+                'title': 'h3 > a::text',
+                'visible_link': 'a > span::text'
+            }
+        },
+        'ads_top': {
+            'nojs': {
+                'container': '#content_left',
+                'result_container': '#4001',
+                'link': 'h3 > a::attr(href)',
+                'snippet': 'div > a::text',
+                'title': 'h3 > a::text',
+                'visible_link': 'a > span::text'
+            }
+        },
+        
     }
 
     def __init__(self, *args, **kwargs):
