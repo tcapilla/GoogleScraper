@@ -6,7 +6,7 @@ import re
 import lxml.html
 from lxml.html.clean import Cleaner
 import logging
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 import pprint
 from GoogleScraper.database import SearchEngineResultsPage, generate_id
 from GoogleScraper.config import Config
@@ -446,6 +446,26 @@ class GoogleParser(Parser):
             if result:
                 self.search_results[key][i]['link'] = unquote(result.group('url'))
 
+            use_visible = False
+            actual_link = self.search_results[key][i]['link']
+            if actual_link:
+                if not re.match('http', actual_link):
+                    actual_link = 'http://' + actual_link
+                parsed_url = urlparse(actual_link)
+                if not parsed_url.netloc:
+                    use_visible = True
+            else:
+                use_visible = True
+                
+            if use_visible and self.search_results[key][i]['visible_link']:
+                vlink = str.strip(self.search_results[key][i]['visible_link'])
+                try:
+                    vlink = vlink.split()[0]
+                except:
+                    pass
+                self.search_results[key][i]['visible_link'] = 'http://' + vlink # Tweak this and Baidu
+                self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
+
 
 class YandexParser(Parser):
     """Parses SERP pages of the Yandex search engine."""
@@ -841,8 +861,7 @@ class BaiduParser(Parser):
                     pass
                 self.search_results[key][i]['visible_link'] = 'http://' + vlink
                 self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
-                
-        
+                        
         if self.search_engine == 'normal':
             if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
                 self.no_results = True
