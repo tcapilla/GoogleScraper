@@ -21,7 +21,7 @@ from GoogleScraper.scraping import ScrapeWorkerFactory
 from GoogleScraper.output_converter import init_outfile
 from GoogleScraper.async_mode import AsyncScrapeScheduler
 import GoogleScraper.config
-from GoogleScraper.s3 import S3Table
+import GoogleScraper.s3 as s3
 
 logger = logging.getLogger('GoogleScraper')
 
@@ -378,6 +378,8 @@ def main(return_results=False, parse_cmd_line=True):
         # A lock to prevent multiple threads from solving captcha, used in selenium instances.
         captcha_lock = threading.Lock()
 
+        serp_log = SERPLog()
+        
         out('Going to scrape {num_keywords} keywords with {num_proxies} proxies by using {num_threads} threads.'.format(
             num_keywords=len(list(scrape_jobs)),
             num_proxies=len(proxies),
@@ -429,7 +431,7 @@ def main(return_results=False, parse_cmd_line=True):
 
             while not workers.empty():
                 worker = workers.get()
-                thread = worker.get_worker()
+                thread = worker.get_worker(serp_log)
                 if thread:
                     threads.append(thread)
 
@@ -470,13 +472,30 @@ def main(return_results=False, parse_cmd_line=True):
 
     ## Copy data to S3
     table_objs = [ScraperSearch, SERP, Link, Proxy, SearchEngine, SearchEngineProxyStatus]
-    s3writers = [ S3Table(to, Config['SCRAPE_INFOS'].get('scrape_id'), Config['ENV'])
+    s3writers = [ s3.S3Table(to, Config['SCRAPE_INFOS'].get('scrape_id'), Config['ENV'])
                   for to in table_objs ]
     for w in s3writers:
         w.load_data(session)
     for w in s3writers:
         w.write_buffer_to_s3()
 
+    ## Save SERPS
+    serp_log.write_to_s3()
+
     ##
     if return_results:
         return scraper_search
+
+
+class SERPLog:
+    def __init__(self):
+        self.catalog = {}
+        self.scrape_id = Config['SCRAPE_INFOS']['scrape_id']
+
+    def add(self, keyword, serp):
+        self.catalog[keyword] = serp
+
+    def write_to_s3(self):
+        conn = s3.get_s3_conn(Config['ENV'])
+        for k, s in self.catalog.items():
+            s3.store_serp_in_s3(s, self.scrape_id, k, Config['ENV'], conn)

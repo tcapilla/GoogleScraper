@@ -145,7 +145,7 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
         results: Returns the found results.
     """
 
-    def __init__(self, *args, time_offset=0.0, **kwargs):
+    def __init__(self, *args, serp_log=None, time_offset=0.0, **kwargs):
         """Initialize an HttScrape object to scrape over blocking http.
 
         HttpScrape inherits from SearchEngineScrape
@@ -177,6 +177,8 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
         if self.search_engine_name == 'blekko':
             logger.critical('blekko doesnt support http mode.')
             self.startable = False
+
+        self.all_serps = {}
 
     def set_proxy(self):
         """Setup a socks connection for the socks module bound to this instance.
@@ -300,7 +302,7 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             self.html = request.text
 
             scrape_id = Config['SCRAPE_INFOS'].get('scrape_id')
-            s3.store_serp_in_s3(self.html, scrape_id, self.query, Config['ENV'])
+            self.serp_log(self.query, self.html)
             
             out('[HTTP - {url}, headers={headers}, params={params}'.format(
                 url=request.url,

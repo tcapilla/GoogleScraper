@@ -472,5 +472,6 @@ class ScrapeWorkerFactory():
                     proxy=self.proxy,
                     progress_queue=self.progress_queue,
                 )
+            s3.store_serp_in_s3(self.html, scrape_id, self.query, Config['ENV'])
 
         return None
