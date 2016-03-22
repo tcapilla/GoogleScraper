@@ -9,6 +9,7 @@ import socket
 from urllib.parse import urlencode
 
 import GoogleScraper.socks as socks
+import GoogleScraper.s3 as s3
 from GoogleScraper.scraping import SearchEngineScrape, get_base_search_url_by_search_engine
 from GoogleScraper.parsing import get_parser_by_search_engine
 from GoogleScraper.config import Config
@@ -297,7 +298,9 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             
             self.requested_at = datetime.datetime.utcnow()
             self.html = request.text
-            #print("\n\n[HTML]\n{html}\n[/HTML]\n\n".format(html=self.html))
+
+            scrape_id = Config['SCRAPE_INFOS'].get('scrape_id')
+            s3.store_serp_in_s3(self.html, scrape_id, self.query)
             
             out('[HTTP - {url}, headers={headers}, params={params}'.format(
                 url=request.url,
