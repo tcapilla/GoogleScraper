@@ -301,8 +301,7 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             self.requested_at = datetime.datetime.utcnow()
             self.html = request.text
 
-            scrape_id = Config['SCRAPE_INFOS'].get('scrape_id')
-            self.serp_log(self.query, self.html)
+            self.serp_log.add(self.query, self.html)
             
             out('[HTTP - {url}, headers={headers}, params={params}'.format(
                 url=request.url,
