@@ -8,6 +8,7 @@ from datetime import datetime
 
 import tinys3
 
+from GoogleScraper.config import Config
 
 ### dict/key with environment!
 ### 
@@ -16,17 +17,17 @@ import tinys3
 SCRAPER_TO_LOAD = 'scraper_to_load'
 NULL_STRING='null_string'
 
-AMAZON_WEB_SERVICES_ACCESS_KEY = self._env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
-AMAZON_WEB_SERVICES_SECRET_KEY = self._env.get('AMAZON_WEB_SERVICES_SECRET_KEY')
-RAVANA_S3_BUCKET = self._env.get('RAVANA_S3_BUCKET')
-L2WR_SERPS = self._env.get('L2WR_SERPS')
+ENV = Config['ENV']
+AMAZON_WEB_SERVICES_ACCESS_KEY = ENV.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
+AMAZON_WEB_SERVICES_SECRET_KEY = ENV.get('AMAZON_WEB_SERVICES_SECRET_KEY')
+RAVANA_S3_BUCKET = ENV.get('RAVANA_S3_BUCKET')
+L2WR_SERPS = ENV.get('L2WR_SERPS')
 
 class S3Table:
     
-    def __init__(self, table_obj, scrape_id, env):
+    def __init__(self, table_obj, scrape_id):
         self._table_obj = table_obj
         self._scrape_id = scrape_id
-        self._env = env
 
         ##
         self._tablename = table_obj.__tablename__
