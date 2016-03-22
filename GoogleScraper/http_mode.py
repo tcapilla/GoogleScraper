@@ -300,7 +300,7 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             self.html = request.text
 
             scrape_id = Config['SCRAPE_INFOS'].get('scrape_id')
-            s3.store_serp_in_s3(self.html, scrape_id, self.query)
+            s3.store_serp_in_s3(self.html, scrape_id, self.query, Config['ENV'])
             
             out('[HTTP - {url}, headers={headers}, params={params}'.format(
                 url=request.url,

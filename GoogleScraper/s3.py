@@ -8,7 +8,6 @@ from datetime import datetime
 
 import tinys3
 
-from GoogleScraper.config import Config
 
 ### dict/key with environment!
 ### 
@@ -17,17 +16,15 @@ from GoogleScraper.config import Config
 SCRAPER_TO_LOAD = 'scraper_to_load'
 NULL_STRING='null_string'
 
-ENV = Config['ENV']
-AMAZON_WEB_SERVICES_ACCESS_KEY = ENV.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
-AMAZON_WEB_SERVICES_SECRET_KEY = ENV.get('AMAZON_WEB_SERVICES_SECRET_KEY')
-RAVANA_S3_BUCKET = ENV.get('RAVANA_S3_BUCKET')
-L2WR_SERPS = ENV.get('L2WR_SERPS')
 
 class S3Table:
     
-    def __init__(self, table_obj, scrape_id):
+    def __init__(self, table_obj, scrape_id, env):
         self._table_obj = table_obj
         self._scrape_id = scrape_id
+        self.AMAZON_WEB_SERVICES_ACCESS_KEY = env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
+        self.AMAZON_WEB_SERVICES_SECRET_KEY = env.get('AMAZON_WEB_SERVICES_SECRET_KEY')
+        self.RAVANA_S3_BUCKET = env.get('RAVANA_S3_BUCKET')
 
         ##
         self._tablename = table_obj.__tablename__
@@ -48,21 +45,21 @@ class S3Table:
         
         
     def write_buffer_to_s3(self):
-        conn = tinys3.Connection(AMAZON_WEB_SERVICES_ACCESS_KEY,
-                                 AMAZON_WEB_SERVICES_SECRET_KEY)
+        conn = tinys3.Connection(self.AMAZON_WEB_SERVICES_ACCESS_KEY,
+                                 self.AMAZON_WEB_SERVICES_SECRET_KEY)
         content = BytesIO(self._buffer.getvalue().encode('utf-8'))
         conn.upload(os.path.join(SCRAPER_TO_LOAD, self._table_file),
                     content,
-                    RAVANA_S3_BUCKET)
+                    self.RAVANA_S3_BUCKET)
 
         manifest_content = BytesIO(StringIO(json.dumps(
             {"entries": [{"url": "s3://{0}/{1}/{2}".format(
-                RAVANA_S3_BUCKET,
+                self.RAVANA_S3_BUCKET,
                 SCRAPER_TO_LOAD,
                 self._table_file)}]})).getvalue().encode('utf-8'))
         conn.upload(os.path.join(SCRAPER_TO_LOAD, self._manifest_file),
                     manifest_content,
-                    RAVANA_S3_BUCKET)
+                    self.RAVANA_S3_BUCKET)
 
         
     def load_data(self, session):
@@ -73,14 +70,15 @@ class S3Table:
                                     for column in self._table_obj.__mapper__.columns ])
 
 
-def store_serp_in_s3(serp, scrape_id, keyword):
-        conn = tinys3.Connection(AMAZON_WEB_SERVICES_ACCESS_KEY,
-                                 AMAZON_WEB_SERVICES_SECRET_KEY)
-        content = BytesIO(serp.encode('utf-8'))
-        filename = "{scrape_id}_{keyword}_{time}.html".format(
-            scrape_id=scrape_id,
-            keyword=keyword,
-            time=str(datetime.now()).replace(" ", "_"))
-        conn.upload(filename,
-                    content,
-                    L2WR_SERPS)
+def store_serp_in_s3(serp, scrape_id, keyword, env):
+    L2WR_SERPS = env.get('L2WR_SERPS')
+    conn = tinys3.Connection(env.get(AMAZON_WEB_SERVICES_ACCESS_KEY),
+                             env.get(AMAZON_WEB_SERVICES_SECRET_KEY))
+    content = BytesIO(serp.encode('utf-8'))
+    filename = "{scrape_id}_{keyword}_{time}.html".format(
+        scrape_id=scrape_id,
+        keyword=keyword,
+        time=str(datetime.now()).replace(" ", "_"))
+    conn.upload(filename,
+                content,
+                env.get(L2WR_SERPS))

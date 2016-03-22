@@ -470,7 +470,7 @@ def main(return_results=False, parse_cmd_line=True):
 
     ## Copy data to S3
     table_objs = [ScraperSearch, SERP, Link, Proxy, SearchEngine, SearchEngineProxyStatus]
-    s3writers = [ S3Table(to, Config['SCRAPE_INFOS'].get('scrape_id'))
+    s3writers = [ S3Table(to, Config['SCRAPE_INFOS'].get('scrape_id'), Config['ENV'])
                   for to in table_objs ]
     for w in s3writers:
         w.load_data(session)
