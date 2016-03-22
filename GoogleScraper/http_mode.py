@@ -178,7 +178,7 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             logger.critical('blekko doesnt support http mode.')
             self.startable = False
 
-        self.serp_log = {}
+        self.serp_log = serp_log
 
     def set_proxy(self):
         """Setup a socks connection for the socks module bound to this instance.
