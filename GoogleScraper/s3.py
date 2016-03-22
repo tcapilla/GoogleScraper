@@ -71,8 +71,8 @@ class S3Table:
 
 
 def get_s3_conn(env):
-    return = tinys3.Connection(env.get('AMAZON_WEB_SERVICES_ACCESS_KEY'),
-                               env.get('AMAZON_WEB_SERVICES_SECRET_KEY'))
+    return tinys3.Connection(env.get('AMAZON_WEB_SERVICES_ACCESS_KEY'),
+                             env.get('AMAZON_WEB_SERVICES_SECRET_KEY'))
 
 
 def store_serp_in_s3(serp, scrape_id, keyword, env, conn=None):
