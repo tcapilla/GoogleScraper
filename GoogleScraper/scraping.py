@@ -440,7 +440,7 @@ class ScrapeWorkerFactory():
 
         self.jobs[query].append(page_number)
 
-    def get_worker(self):
+    def get_worker(self, serp_log=None):
 
         if self.jobs:
 
@@ -471,7 +471,7 @@ class ScrapeWorkerFactory():
                     db_lock=self.db_lock,
                     proxy=self.proxy,
                     progress_queue=self.progress_queue,
+                    serp_log=serp_log
                 )
-            s3.store_serp_in_s3(self.html, scrape_id, self.query, Config['ENV'])
 
         return None
