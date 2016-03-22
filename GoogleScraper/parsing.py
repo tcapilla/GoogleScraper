@@ -143,11 +143,11 @@ class Parser():
         """
         self._parse_lxml(cleaner)
 
-        # try to parse the number of results.
+        # Try to parse the number of results
         attr_name = self.searchtype + '_search_selectors'
         selector_dict = getattr(self, attr_name, None)
 
-        # get the appropriate css selectors for the num_results for the keyword
+        # Get the appropriate css selectors for the num_results for the keyword
         num_results_selector = getattr(self, 'num_results_search_selectors', None)
 
         self.num_results_for_query = self.first_match(num_results_selector, self.dom)
@@ -155,29 +155,32 @@ class Parser():
             out('{}: Cannot parse num_results from serp page with selectors {}'.format(self.__class__.__name__,
                                                                                        num_results_selector), lvl=4)
 
-        # get the current page we are at. Sometimes we search engines don't show this.
+        # Get the current page we are at (sometimes search engines don't show this)
         try:
             self.page_number = int(self.first_match(self.page_number_selectors, self.dom))
         except ValueError:
             self.page_number = -1
 
-        # let's see if the search query was shitty (no results for that query)
+        # Let's see if the search query was shitty (no results for that query)
         self.effective_query = self.first_match(self.effective_query_selector, self.dom)
         if self.effective_query:
             out('{}: There was no search hit for the search query. Search engine used {} instead.'.format(
                 self.__class__.__name__, self.effective_query), lvl=4)
 
-        # the element that notifies the user about no results.
+        # The element that notifies the user about no results
         self.no_results_text = self.first_match(self.no_results_selector, self.dom)
 
-        # get the stuff that is of interest in SERP pages.
+        # Get the stuff that is of interest in SERP pages
         if not selector_dict and not isinstance(selector_dict, dict):
             raise InvalidSearchTypeException('There is no such attribute: {}. No selectors found'.format(attr_name))
 
+        #
+        # Where it allll happens...
+        #
         for result_type, selector_class in selector_dict.items():
-
+            
             self.search_results[result_type] = []
-
+            
             for selector_specific, selectors in selector_class.items():
 
                 if 'result_container' in selectors and selectors['result_container']:
@@ -209,13 +212,27 @@ class Parser():
 
                     serp_result['rank'] = index + 1
 
-                    # only add items that have not None links.
-                    # Avoid duplicates. Detect them by the link.
-                    # If statement below: Lazy evaluation. The more probable case first.
+                    # Only add when link is not None and no
+                    # duplicates. If a duplicate result does exist but
+                    # have a visible link that was missing previously,
+                    # replace old one.
                     if 'link' in serp_result and serp_result['link'] and \
-                            not [e for e in self.search_results[result_type] if e['link'] == serp_result['link']]:
+                       not [ e for e in self.search_results[result_type] if e['link'] == serp_result['link'] ]:
+                        serp_result['rank'] = index + 1
                         self.search_results[result_type].append(serp_result)
                         self.num_results += 1
+                    elif 'link' in serp_result and serp_result['link'] and \
+                         'visible_link' in serp_result and serp_result['visible_link']:
+
+                        vlinks = [ e for e in self.search_results[result_type] if e['link'] == serp_result['link']
+                                   and e['visible_link'] is None ]
+                        
+                        if vlinks:
+                            vl = vlinks[0] # should only be one
+                            serp_result['rank'] = vl['rank']
+                            vl_index = self.search_results[result_type].index(vl)
+                            self.search_results[result_type][vl_index] = serp_result
+
 
     def advanced_css(self, selector, element):
         """Evaluate the :text and ::attr(attr-name) additionally.
@@ -467,6 +484,243 @@ class GoogleParser(Parser):
                 self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
 
 
+class BaiduParser(Parser):
+    """Parses SERP pages of the Baidu search engine."""
+
+    search_engine = 'baidu'
+
+    search_types = ['normal', 'image']
+
+    num_results_search_selectors = ['#container .nums']
+
+    no_results_selector = []
+
+    # no such thing for baidu
+    effective_query_selector = ['']
+
+    page_number_selectors = ['.fk_cur + .pc::text']
+
+    normal_search_selectors = {
+        'organic': {
+            '0': {
+                'container': '#content_left',
+                'result_container': '.c-container',
+                'title': 'h3 > a::text',
+                'link': 'h3 > a::attr(href)',
+                'snippet': '.c-abstract::text',
+                'visible_link': '.c-showurl::text'
+            },
+        },
+        
+        'brand_zone': {
+            '0': {
+                'container': '#content_left',
+                'result_container': 'div[class$="-0-0"]',
+                'title': 'a[class$="-header-title"]::text',
+                'link': 'a[class$="-header-title"]::attr(href)',
+                'snippet': 'div[id$="-description"]::text',
+                'visible_link': 'div[class$="-site"]::text'
+            } ,
+            '1': {
+                'container': '#content_left',
+                'result_container': 'div[class$="-h1"]',
+                'title': 'h2 > a[class$="-header-title"]::text',
+                'link': 'h2 > a[class$="-header-title"]::attr(href)',
+                'snippet': 'div[id$="-description"]',
+                'visible_link': 'div[class$="-site"]'
+            },
+        },
+        
+        'brand_zone_side': {
+            '0': {
+                'container': 'td[align="left"] > div:first-child',
+                'result_container': 'div:nth-child(3) > div:nth-child(1)',
+                'link': 'div:nth-child(1) a::attr(href)',
+                'snippet': 'div:nth-child(3) a::text',
+                'title': 'div:nth-child(1) a::text',
+                'visible_link': 'div:nth-child(5) a::text'
+            },
+            '1': {
+                'container': '#content_right',
+                'result_container': 'td[align="left"] > div > div > div',
+                'title': 'div[class$="-title"] > h2[id$="-h2"] > a::text',
+                'link': 'div[class$="-title"] > h2[id$="-h2"] > a::attr(href)',
+                'snippet': 'div[class$="-htmltext"] > p[class$="-htmltext-desc"] > a::text',
+                'visible_link': 'div[class$="-show-url"] > div[class$="-site"] > a::text'
+            },
+            '2': {
+                'container': '#content_right',
+                'result_container': 'td > div > div',
+                'title': 'FAKETAG',
+                'link': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::attr(href)',
+                'snippet': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::text',
+                'visible_link': 'FAKETAG'
+            },
+            '3': {
+                'container': '#content_right',
+                'result_container': 'td[align="left"] > div > div > div',
+                'title': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::text',
+                'link': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::attr(href)',
+                'snippet': 'div[class$="-htmltext"] > p[class$="-htmltext-desc"] > a::text',
+                'visible_link': 'div[class$="-show-url"] > div[class$="-site"] > a::text'
+            },
+            '4': {
+                'container': '#content_right',
+                'result_container': 'td > div > div',
+                'title': 'FAKETAG',
+                'link': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::attr(href)',
+                'snippet': 'div[class$="-atom-htmltext"] > p[class$="-htmltext-desc"] > a::text',
+                'visible_link': 'div[class$="-show-url"] > div[class$="-site"] > a::text'
+            },
+        },
+
+        'promo_ads_side': {
+            '0': {
+                'container': '.ad-widget',
+                'result_container': '.ec-figcaption',
+                'link': 'h2 > a::attr(href)',
+                'snippet': '.ec-description-link',
+                'title': 'h2 > a::text',
+                'visible_link': '.ec-footer::text'
+            }
+        },
+
+        'ads_side': {
+            '1': {
+                'container': '#ec_im_container',
+                'result_container': 'div[id^="bdfs"]',
+                'title': 'a[id^="dfs"]::text',
+                'link': 'a[id^="dfs"]::attr(href)',
+                'snippet': 'a[id^="bdfs"] > font:nth-child(2)',
+                'visible_link': 'a[id^="bdfs"] > font:nth-child(4)'
+            },
+        },
+
+        'ads_bottom': {
+            '0': {
+                'container': '#content_left',
+                'result_container': 'div[id^="50"]',
+                'link': 'h3 > a::attr(href)',
+                'snippet': 'div > a::text',
+                'title': 'h3 > a::text',
+                'visible_link': 'a > span::text'
+            },
+            
+            '1': { 
+                'container': '#content_left',
+                'result_container': 'div[id^="50"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) > a::text',
+                'visible_link': 'div:nth-child(3) > a > span'
+            },
+            '2': {
+                'container': '#content_left',
+                'result_container': 'div[id^="50"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) tr:nth-child(2) > div > font > a::text',
+                'visible_link': 'div:nth-child(2) tr:nth-child(2) > div > div > a > span'
+            },
+            '3': { 
+                'container': '#content_left',
+                'result_container': 'div[id^="50"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) > a::text',
+                'visible_link': 'div:nth-child(3) > a > span'
+            },
+            '4': {
+                'container': '#content_left',
+                'result_container': 'div[id^="50"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'font > a::text',
+                'visible_link': 'div:nth-child(2) > a > span'
+            },
+        }, 
+
+        'ads_top': {
+            '0': {
+                'container': '#content_left',
+                'result_container': '#4001',
+                'link': 'h3 > a::attr(href)',
+                'snippet': 'div > a::text',
+                'title': 'h3 > a::text',
+                'visible_link': 'a > span::text'
+            },
+            '1': {
+                'container': '#content_left',
+                'result_container': 'div[id^="40"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) > div:nth-child(1) > div:nth-child(2)',
+                'visible_link': 'div:nth-child(3) > a > span'
+            },
+            '2': {
+                'container': '#content_left',
+                'result_container': 'div[id^="40"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) > a::text',
+                'visible_link': 'div:nth-child(3) > a > span'
+            },
+            '3': {
+                'container': '#content_left',
+                'result_container': 'div[id^="40"]',
+                'title': 'div:nth-child(1) > h3 > a::text',
+                'link': 'div:nth-child(1) > h3 > a::attr(href)',
+                'snippet': 'div:nth-child(2) > table div > font > a::text',
+                'visible_link': 'div:nth-child(3) > a > span'
+            },
+        },
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def parse(self, html=None):
+        pass # TODO
+
+    def after_parsing(self):
+        """Clean the urls.
+
+        href="/i?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=matterhorn&step_word=&ie=utf-8&in=9250&
+        cl=2&lm=-1&st=&cs=3326243323,1574167845&os=1495729451,4260959385&pn=0&rn=1&di=69455168860&ln=1285&
+        fr=&&fmq=1419285032955_R&ic=&s=&se=&sme=0&tab=&width=&height=&face=&is=&istype=&ist=&jit=&
+        objurl=http%3A%2F%2Fa669.phobos.apple.com%2Fus%2Fr1000%2F077%2FPurple%2F\
+        v4%2F2a%2Fc6%2F15%2F2ac6156c-e23e-62fd-86ee-7a25c29a6c72%2Fmzl.otpvmwuj.1024x1024-65.jpg&adpicid=0"
+        """
+        super().after_parsing()
+
+        # Extract the domain from the visible link since Baidu always
+        # redirects through its own domain.
+        for key, i in self.iter_serp_items():
+            # HTML hard to pin down for now. Just delete incorrectly scraped elements. 
+            if not any([self.search_results[key][i]['title'],
+                        self.search_results[key][i]['snippet'],
+                        self.search_results[key][i]['visible_link']]):
+                del self.search_results[key][i]
+                continue
+                
+            if self.search_results[key][i]['visible_link']:
+                vlink = str.strip(self.search_results[key][i]['visible_link'])
+                try:
+                    vlink = vlink.split()[0]
+                except:
+                    pass
+                self.search_results[key][i]['visible_link'] = 'http://' + vlink
+                self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
+                        
+        if self.search_engine == 'normal':
+            if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
+                self.no_results = True
+
+            for key, i in self.iter_serp_items():
+                if self.search_results[key][i]['visible_link'] is None:
+                    del self.search_results[key][i]
+
+                
 class YandexParser(Parser):
     """Parses SERP pages of the Yandex search engine."""
 
@@ -737,138 +991,6 @@ class YahooParser(Parser):
                         # TODO: Fix this manual protocol adding by parsing "rurl"
                         self.search_results[key][i]['link'] = 'http://' + unquote(result.group('url'))
                         break
-
-
-class BaiduParser(Parser):
-    """Parses SERP pages of the Baidu search engine."""
-
-    search_engine = 'baidu'
-
-    search_types = ['normal', 'image']
-
-    num_results_search_selectors = ['#container .nums']
-
-    no_results_selector = []
-
-    # no such thing for baidu
-    effective_query_selector = ['']
-
-    page_number_selectors = ['.fk_cur + .pc::text']
-
-    normal_search_selectors = {
-        'organic': {
-            'nojs': {
-                'container': '#content_left',
-                'result_container': '.c-container',
-                'link': 'h3 > a::attr(href)',
-                'snippet': '.c-abstract::text',
-                'title': 'h3 > a::text',
-                'visible_link': '.c-showurl::text'
-            }
-        },
-        'brand_zone': {
-            'nojs': {
-                'container': '#content_left',
-                'result_container': 'div[class$="-0-0"]',
-                'link': 'a[class$="-header-title"]::attr(href)',
-                'snippet': 'div[id$="-description"]::text',
-                'title': 'a[class$="-header-title"]::text',
-                'visible_link': 'div[class$="-site"]::text'
-            }  
-        },
-        'brand_zone_side': {
-            'nojs': {
-                'container': 'td[align="left"] > div:first-child',
-                'result_container': 'div:nth-child(3) > div:nth-child(1)',
-                'link': 'div:nth-child(1) a::attr(href)',
-                'snippet': 'div:nth-child(3) a::text',
-                'title': 'div:nth-child(1) a::text',
-                'visible_link': 'div:nth-child(5) a::text'
-            }
-        },
-        'ads_side': {
-            'nojs': {
-                'container': '#ec_im_container',
-                'result_container': 'div[id^="bdfs"]',
-                'link': 'a[id^="dfs"]::attr(href)',
-                'snippet': 'a[id^="bdfs"]::text',
-                'title': 'a[id^="dfs"]::text',
-                'visible_link': 'a[id^="bdfs"] > font:last-child'
-            }
-        },
-        'promo_ads_side': {
-            'nojs': {
-                'container': '.ad-widget',
-                'result_container': '.ec-figcaption',
-                'link': 'h2 > a::attr(href)',
-                'snippet': '.ec-description-link',
-                'title': 'h2 > a::text',
-                'visible_link': '.ec-footer::text'
-            }
-        },
-        'ads_bottom': {
-            'nojs': {
-                'container': '#content_left',
-                'result_container': '#5001',
-                'link': 'h3 > a::attr(href)',
-                'snippet': 'div > a::text',
-                'title': 'h3 > a::text',
-                'visible_link': 'a > span::text'
-            }
-        },
-        'ads_top': {
-            'nojs': {
-                'container': '#content_left',
-                'result_container': '#4001',
-                'link': 'h3 > a::attr(href)',
-                'snippet': 'div > a::text',
-                'title': 'h3 > a::text',
-                'visible_link': 'a > span::text'
-            }
-        },
-        
-    }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def after_parsing(self):
-        """Clean the urls.
-
-        href="/i?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=matterhorn&step_word=&ie=utf-8&in=9250&
-        cl=2&lm=-1&st=&cs=3326243323,1574167845&os=1495729451,4260959385&pn=0&rn=1&di=69455168860&ln=1285&
-        fr=&&fmq=1419285032955_R&ic=&s=&se=&sme=0&tab=&width=&height=&face=&is=&istype=&ist=&jit=&
-        objurl=http%3A%2F%2Fa669.phobos.apple.com%2Fus%2Fr1000%2F077%2FPurple%2F\
-        v4%2F2a%2Fc6%2F15%2F2ac6156c-e23e-62fd-86ee-7a25c29a6c72%2Fmzl.otpvmwuj.1024x1024-65.jpg&adpicid=0"
-        """
-        super().after_parsing()
-
-        # Extract the domain from the visible link since Baidu always
-        # redirects through its own domain.
-        for key, i in self.iter_serp_items():
-            # HTML hard to pin down for now. Just delete incorrectly scraped elements. 
-            if not any([self.search_results[key][i]['title'],
-                        self.search_results[key][i]['snippet'],
-                        self.search_results[key][i]['visible_link']]):
-                del self.search_results[key][i]
-                continue
-                
-            if self.search_results[key][i]['visible_link']:
-                vlink = str.strip(self.search_results[key][i]['visible_link'])
-                try:
-                    vlink = vlink.split()[0]
-                except:
-                    pass
-                self.search_results[key][i]['visible_link'] = 'http://' + vlink
-                self.search_results[key][i]['link'] = self.search_results[key][i]['visible_link']
-                        
-        if self.search_engine == 'normal':
-            if len(self.dom.xpath(self.css_to_xpath('.hit_top_new'))) >= 1:
-                self.no_results = True
-
-            for key, i in self.iter_serp_items():
-                if self.search_results[key][i]['visible_link'] is None:
-                    del self.search_results[key][i]
                 
 
 class DuckduckgoParser(Parser):
@@ -1078,6 +1200,12 @@ def get_parser_by_url(url):
 
     return parser
 
+def is_this_search_engine(search_engine, matching_search_engines):
+    """A predicate meant to centralize all search engine token
+    comparisons.
+
+    """
+    return search_engine.lower() in map(lambda s: s.lower(), matching_search_engines)
 
 def get_parser_by_search_engine(search_engine):
     """Get the appropriate parser for the search_engine
@@ -1091,30 +1219,34 @@ def get_parser_by_search_engine(search_engine):
     Raises:
         NoParserForSearchEngineException if no parser could be found for the name.
     """
-    if search_engine == 'google' or search_engine == 'googleimg':
+    if is_this_search_engine(search_engine, ['google', 'googleimg']):
         return GoogleParser
-    elif search_engine == 'yandex':
-        return YandexParser
-    elif search_engine == 'bing':
-        return BingParser
-    elif search_engine == 'yahoo':
-        return YahooParser
     elif search_engine == 'baidu' or search_engine == 'baiduimg':
         return BaiduParser
-    elif search_engine == 'duckduckgo':
+    # The following branches ought be expunged vigorously and with
+    # great flourish. The exception may be Yandex, but the Russia team
+    # has become mysteriously quiet, even absent. Perhaps His
+    # Excellency Putin was displeased...
+    elif is_this_search_engine(search_engine, ['yandex']):
+        return YandexParser
+    elif is_this_search_engine(search_engine, ['bing']):
+        return BingParser
+    elif is_this_search_engine(search_engine, ['yahoo']):
+        return YahooParser
+    elif is_this_search_engine(search_engine, ['duckduckgo']):
         return DuckduckgoParser
-    elif search_engine == 'ask':
+    elif is_this_search_engine(search_engine, ['ask']):
         return AskParser
-    elif search_engine == 'blekko':
+    elif is_this_search_engine(search_engine, ['blekko']):
         return BlekkoParser
-    elif search_engine == 'youtube':
+    elif is_this_search_engine(search_engine, ['youtube']):
         return YouTubeParser
-    elif search_engine == 'youtube_sponsored':
+    elif is_this_search_engine(search_engine, ['youtube_sponsored']):
         return YouTubeSponsoredParser
     else:
         raise NoParserForSearchEngineException('No such parser for {}'.format(search_engine))
 
-
+    
 def parse_serp(html=None, parser=None, scraper=None, search_engine=None, query=''):
     """Store the parsed data in the sqlalchemy session.
 

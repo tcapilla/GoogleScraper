@@ -297,7 +297,8 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
             
             self.requested_at = datetime.datetime.utcnow()
             self.html = request.text
-
+            #print("\n\n[HTML]\n{html}\n[/HTML]\n\n".format(html=self.html))
+            
             out('[HTTP - {url}, headers={headers}, params={params}'.format(
                 url=request.url,
                 headers=self.headers,
