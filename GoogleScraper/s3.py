@@ -71,9 +71,8 @@ class S3Table:
 
 
 def store_serp_in_s3(serp, scrape_id, keyword, env):
-    L2WR_SERPS = env.get('L2WR_SERPS')
-    conn = tinys3.Connection(env.get(AMAZON_WEB_SERVICES_ACCESS_KEY),
-                             env.get(AMAZON_WEB_SERVICES_SECRET_KEY))
+    conn = tinys3.Connection(env.get('AMAZON_WEB_SERVICES_ACCESS_KEY'),
+                             env.get('AMAZON_WEB_SERVICES_SECRET_KEY'))
     content = BytesIO(serp.encode('utf-8'))
     filename = "{scrape_id}_{keyword}_{time}.html".format(
         scrape_id=scrape_id,
@@ -81,4 +80,4 @@ def store_serp_in_s3(serp, scrape_id, keyword, env):
         time=str(datetime.now()).replace(" ", "_"))
     conn.upload(filename,
                 content,
-                env.get(L2WR_SERPS))
+                env.get('L2WR_SERPS'))
