@@ -9,28 +9,33 @@ from datetime import datetime
 import tinys3
 
 
-### dict/key with environment!
-### 
-### 
-
 SCRAPER_TO_LOAD = 'scraper_to_load'
 NULL_STRING='null_string'
 
 
 class S3Table:
     
-    def __init__(self, table_obj, scrape_id, env):
+    def __init__(self, table_obj, scrape_id, env, **switches):
         self._table_obj = table_obj
         self._scrape_id = scrape_id
         self.AMAZON_WEB_SERVICES_ACCESS_KEY = env.get('AMAZON_WEB_SERVICES_ACCESS_KEY')
         self.AMAZON_WEB_SERVICES_SECRET_KEY = env.get('AMAZON_WEB_SERVICES_SECRET_KEY')
         self.RAVANA_S3_BUCKET = env.get('RAVANA_S3_BUCKET')
 
+        self.retry_tag = ''
+        if self.switches.get('retry'):
+            self.retry_tag = '_RETRY'
+
         ##
         self._tablename = table_obj.__tablename__
-        self._table_file = '{0}-{1}.csv'.format(self._tablename, self._scrape_id)
-        self._manifest_file = 'l2wr_{0}_{1}_manifest'.format(self._tablename,
-                                                             self._scrape_id)
+        self._table_file = '{tablename}-{scrape_id}{retry_tag}.csv'.format(
+            tablename=self._tablename,
+            scrape_id=self._scrape_id,
+            retry_tag=self.retry_tag)
+        self._manifest_file = 'l2wr_{tablename}_{scrape_id}{retry_tag}_manifest'.format(
+            tablename=self._tablename,
+            scrape_id=self._scrape_id,
+            retry_tag=self.retry_tag)
         ##
         self._buffer = StringIO()
         self._writer = csv.writer(self._buffer,
@@ -86,3 +91,4 @@ def store_serp_in_s3(serp, scrape_id, keyword, env, conn=None):
     conn.upload(filename,
                 content,
                 env.get('L2WR_SERPS'))
+
