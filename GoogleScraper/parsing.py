@@ -177,6 +177,7 @@ class Parser():
         #
         # Where it allll happens...
         #
+        print("SELECTOR DICT: {sd}".format(sd=selector_dict))
         for result_type, selector_class in selector_dict.items():
             
             self.search_results[result_type] = []
