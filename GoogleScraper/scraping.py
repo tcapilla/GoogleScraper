@@ -283,7 +283,7 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         """Store the parsed data in the sqlalchemy scoped session."""
         assert self.session, 'No database session.'
 
-        print("Parsing the SERP for {keyword}...".format(self.query))
+        print("Parsing the SERP for {keyword}...".format(keyword=self.query))
         if self.html:
             self.parser.parse(self.html)
         else:
