@@ -23,7 +23,7 @@ class S3Table:
         self.RAVANA_S3_BUCKET = env.get('RAVANA_S3_BUCKET')
 
         self.retry_tag = ''
-        if self.switches.get('retry'):
+        if switches.get('retry'):
             self.retry_tag = '_RETRY'
 
         ##
