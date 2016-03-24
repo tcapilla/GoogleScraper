@@ -471,7 +471,7 @@ def main(return_results=False, parse_cmd_line=True):
     session.commit()
 
     ## Copy data to S3
-    retry = Config['SCRAPE_INFOS'].get('retry')
+    retry = Config['SCRAPE_INFOS'].getboolean('retry')
     if retry:
         print("Saving data to S3 as RETRY...")
     else:
