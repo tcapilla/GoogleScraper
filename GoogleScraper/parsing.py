@@ -182,7 +182,7 @@ class Parser():
             self.search_results[result_type] = []
             
             for selector_specific, selectors in selector_class.items():
-
+                
                 if 'result_container' in selectors and selectors['result_container']:
                     css = '{container} {result_container}'.format(**selectors)
                 else:
@@ -192,10 +192,16 @@ class Parser():
                     self.css_to_xpath(css) # This is where the css selection is compiled to xpath.
                 )
 
+                print("* Scraping {result_type} variation {selector_specific} [{results} results]...".format(
+                    result_type=result_type,
+                    selector_specific=selector_specific,
+                    results=len(results)))
+                
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
                 selectors_to_use = {key: selectors[key] for key in to_extract if key in selectors.keys()}
 
-                for index, result in enumerate(results):
+                current_rank = 1
+                for result in results:
                     # Let's add primitive support for CSS3 pseudo selectors
                     # We just need two of them
                     # ::text
@@ -210,16 +216,18 @@ class Parser():
                     for key, selector in selectors_to_use.items():
                         serp_result[key] = self.advanced_css(selector, result)
 
-                    serp_result['rank'] = index + 1
-
                     # Only add when link is not None and no
                     # duplicates. If a duplicate result does exist but
                     # have a visible link that was missing previously,
                     # replace old one.
                     if 'link' in serp_result and serp_result['link'] and \
                        not [ e for e in self.search_results[result_type] if e['link'] == serp_result['link'] ]:
-                        serp_result['rank'] = index + 1
                         self.search_results[result_type].append(serp_result)
+                        serp_result['rank'] = current_rank
+                        print("\t- {rank}. [NEW] {visible_link}".format(
+                            rank=current_rank,
+                            visible_link=serp_result['visible_link'] or 'None'))
+                        current_rank += 1
                         self.num_results += 1
                     elif 'link' in serp_result and serp_result['link'] and \
                          'visible_link' in serp_result and serp_result['visible_link']:
@@ -229,8 +237,17 @@ class Parser():
                         
                         if vlinks:
                             vl = vlinks[0] # should only be one
+                            print("WARNING: {n_vlinks} matches [{vlinks}]".format(
+                                n_vlinks=len(vlinks),
+                                vlinks=", ".join(map(str, [ e['visible_link'] for e in vlinks ]))))
+                            
                             serp_result['rank'] = vl['rank']
                             vl_index = self.search_results[result_type].index(vl)
+                            # REP = replaced
+                            print("\t- {rank}. [REP] {visible_link} (was {old_vlink})".format(
+                                rank=serp_result['rank'],
+                                visible_link=serp_result['visible_link'],
+                                old_vlink=self.search_results[result_type][vl_index]))
                             self.search_results[result_type][vl_index] = serp_result
 
 

@@ -32,6 +32,7 @@ class S3Table:
             tablename=self._tablename,
             scrape_id=self._scrape_id,
             retry_tag=self.retry_tag)
+        
         self._manifest_file = 'l2wr_{tablename}_{scrape_id}{retry_tag}_manifest'.format(
             tablename=self._tablename,
             scrape_id=self._scrape_id,
