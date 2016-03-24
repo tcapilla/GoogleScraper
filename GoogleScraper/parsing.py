@@ -220,12 +220,14 @@ class Parser():
                     # duplicates. If a duplicate result does exist but
                     # have a visible link that was missing previously,
                     # replace old one.
+                    print("\t- {rank}. {visible_link}".format(
+                        rank=current_rank,
+                        visible_link=serp_result['visible_link'] or 'None'))
                     if 'link' in serp_result and serp_result['link'] and \
                        not [ e for e in self.search_results[result_type] if e['link'] == serp_result['link'] ]:
                         self.search_results[result_type].append(serp_result)
                         serp_result['rank'] = current_rank
-                        print("\t- {rank}. [NEW] {visible_link}".format(
-                            rank=current_rank,
+                        print("\t  [NEWLINK] {visible_link}".format(
                             visible_link=serp_result['visible_link'] or 'None'))
                         current_rank += 1
                         self.num_results += 1
@@ -243,10 +245,8 @@ class Parser():
                             
                             serp_result['rank'] = vl['rank']
                             vl_index = self.search_results[result_type].index(vl)
-                            # REP = replaced
-                            print("\t- {rank}. [REP] {visible_link} (was {old_vlink})".format(
+                            print("\t  [REPLACE] ({rank}. {old_vlink})".format(
                                 rank=serp_result['rank'],
-                                visible_link=serp_result['visible_link'],
                                 old_vlink=self.search_results[result_type][vl_index]))
                             self.search_results[result_type][vl_index] = serp_result
 
