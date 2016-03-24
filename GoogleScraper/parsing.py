@@ -118,6 +118,7 @@ class Parser():
             self.html = html
 
         # lets do the actual parsing
+        print("Parsing the SERP for {keyword}...".format(keyword=self.query))
         self._parse()
 
         # Apply subclass specific behaviour after parsing has happened
@@ -137,6 +138,9 @@ class Parser():
             logger.error(e)
 
     def _parse(self, cleaner=None):
+        print("SERP for {keyword} length = {htmllen}".format(
+            keyword=self.query,
+            htmllen=len(self.html)))
         """Internal parse the dom according to the provided css selectors.
         
         Raises: InvalidSearchTypeException if no css selectors for the searchtype could be found.
