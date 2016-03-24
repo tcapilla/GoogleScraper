@@ -471,11 +471,17 @@ def main(return_results=False, parse_cmd_line=True):
     session.commit()
 
     ## Copy data to S3
+    retry = Config['SCRAPE_INFOS'].get('retry')
+    if retry:
+        print("Saving data to S3 as RETRY...")
+    else:
+        print("Saving data to S3...")
+
     table_objs = [ScraperSearch, SERP, Link, Proxy, SearchEngine, SearchEngineProxyStatus]
     s3writers = [ s3.S3Table(to,
                              Config['SCRAPE_INFOS'].get('scrape_id'),
                              Config['ENV'],
-                             retry=Config['SCRAPE_INFOS'].get('retry'))
+                             retry=retry)
                   for to in table_objs ]
     for w in s3writers:
         w.load_data(session)
