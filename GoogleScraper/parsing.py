@@ -685,9 +685,6 @@ class BaiduParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, html=None):
-        pass # TODO
-
     def after_parsing(self):
         """Clean the urls.
 
