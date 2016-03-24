@@ -420,22 +420,6 @@ class GoogleParser(Parser):
         }
     }
 
-    image_search_selectors = {
-        'organic': {
-            'de_ip': {
-                'container': 'li#isr_mc',
-                'result_container': 'div.rg_di',
-                'link': 'a.rg_l::attr(href)'
-            },
-            'de_ip_raw': {
-                'container': '.images_table',
-                'result_container': 'tr td',
-                'link': 'a::attr(href)',
-                'visible_link': 'cite::text',
-            }
-        }
-    }
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
