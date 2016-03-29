@@ -390,7 +390,7 @@ class GoogleParser(Parser):
 
     normal_search_selectors = {
         'organic': {
-            'us_ip': {
+            '0': {
                 #'container': 'div.srg',
                 #'result_container': 'div.rc',
                 'container': '#center_col',
@@ -402,7 +402,7 @@ class GoogleParser(Parser):
             }
         },
         'ads_main': {
-            'us_ip': {
+            '0': {
                 'container': '#center_col',
                 'result_container': '.ads-ad',
                 'link': 'h3 > a:nth-child(2)::attr(href)',
@@ -412,7 +412,7 @@ class GoogleParser(Parser):
             }
         },
         'ads_side': {
-            'us_ip': {
+            '0': {
                 'container': '#rhs_block',
                 'result_container': '.ads-ad',
                 'link': 'h3 > a:nth-child(2)::attr(href)',
@@ -420,6 +420,32 @@ class GoogleParser(Parser):
                 'title': 'h3 > a:nth-child(2)::text',
                 'visible_link': '.ads-visurl cite::text',
             }
+        },
+        'pla': {
+            '0': {
+                'container': '#rhs_block',
+                'result_container': '._Fcd',
+                'title': '._Ead > a::text',
+                'link': '._Ead > a::attr(href)',
+                'price': '._Bad > b',
+                'store': '._Aad > span::text' 
+            },
+            '1': {
+                'container': '#rhs_block',
+                'result_container': '.pla-hovercard-content-ellip',
+                'title': '.fl::text',
+                'link': '.fl::attr(href)',
+                'price': '._Vpc > b',
+                'store': '.a' 
+            },
+            '2': {
+                'container': '.top-pla-group-inner',
+                'result_container': '.pla-hovercard-content-ellip',
+                'title': '.fl::text',
+                'link': '.fl::attr(href)',
+                'price': '._Vpc > b',
+                'store': '.a' 
+            },
         }
     }
 

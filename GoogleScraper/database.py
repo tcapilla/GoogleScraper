@@ -135,7 +135,7 @@ class SearchEngineResultsPage(Base):
                     parsed = urlparse(link['link'])
 
                     # fill with nones to prevent key errors
-                    [link.update({key: None}) for key in ('snippet', 'title', 'visible_link') if key not in link]
+                    [link.update({key: None}) for key in ('snippet', 'title', 'visible_link', 'price', 'store') if key not in link]
 
                     visibility_link = self._strip_protocol(self._strip_delimiter(link.get('visible_link')))
                     actual_link = self._strip_protocol(self._strip_delimiter(link.get('link')))
@@ -146,6 +146,8 @@ class SearchEngineResultsPage(Base):
                         snippet=self._strip_delimiter(link.get('snippet')),
                         title=self._strip_delimiter(link.get('title')),
                         visible_link=visibility_link,
+                        price=link.get('price'),
+                        store=link.get('store'),
                         actual_link=actual_link,
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
@@ -195,6 +197,8 @@ class Link(Base):
     link = Column(String(4096))
     domain = Column(String(1024))
     visible_link = Column(String(2048))
+    price = Column(String(64))
+    store = Column(String(64))
     actual_link = Column(String(4096))
     rank = Column(Integer)
     link_type = Column(String)
