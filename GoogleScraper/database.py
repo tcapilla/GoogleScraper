@@ -146,17 +146,17 @@ class SearchEngineResultsPage(Base):
                         snippet=self._strip_delimiter(link.get('snippet')),
                         title=self._strip_delimiter(link.get('title')),
                         visible_link=visibility_link,
-                        price=link.get('price'),
-                        store=link.get('store'),
                         actual_link=actual_link,
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
                         rank=link.get('rank'),
+                        link_type=key
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
                         project_id=Config['SCRAPE_INFOS'].get('project_id'),
                         serp=self,
-                        link_type=key
+                        price=link.get('price'),
+                        store=link.get('store'),
                     )
 
     def set_values_from_scraper(self, scraper):
@@ -197,8 +197,6 @@ class Link(Base):
     link = Column(String(4096))
     domain = Column(String(1024))
     visible_link = Column(String(2048))
-    price = Column(String(64))
-    store = Column(String(64))
     actual_link = Column(String(4096))
     rank = Column(Integer)
     link_type = Column(String)
@@ -209,6 +207,9 @@ class Link(Base):
     scrape_time = Column(DateTime, default=datetime.datetime.utcnow)
 
     serp_id = Column(String, ForeignKey('serp.id'))
+    store = Column(String(64))
+    price = Column(String(64))
+
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
 
     def __str__(self):
