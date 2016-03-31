@@ -151,7 +151,7 @@ class SearchEngineResultsPage(Base):
                         profile_url=link.get('profile_url'),
                         domain=parsed.netloc,
                         rank=link.get('rank'),
-                        link_type=key
+                        link_type=key,
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
                         project_id=Config['SCRAPE_INFOS'].get('project_id'),
                         serp=self,
