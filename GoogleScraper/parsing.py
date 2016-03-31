@@ -505,7 +505,7 @@ class GoogleParser(Parser):
             else:
                 use_visible = True
                 
-            if use_visible and self.search_results[key][i]['visible_link']:
+            if use_visible and self.search_results[key][i].get('visible_link'):
                 vlink = str.strip(self.search_results[key][i]['visible_link'])
                 try:
                     vlink = vlink.split()[0]
