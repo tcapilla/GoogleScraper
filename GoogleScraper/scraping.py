@@ -286,7 +286,8 @@ class SearchEngineScrape(metaclass=abc.ABCMeta):
         if self.html:
             self.parser.parse(self.html)
         else:
-            print("Nothing to parse for {keyword}! (page len = {pagelen})".format(pagelen=len(self.html)))
+            print("Nothing to parse for {keyword}! (page len = {pagelen})".format(keyword=self.query,
+                                                                                  pagelen=len(self.html)))
             self.parser = None
 
         with self.db_lock:
