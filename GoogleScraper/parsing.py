@@ -226,13 +226,13 @@ class Parser():
                     # replace old one.
                     print("\t- {rank}. {visible_link}".format(
                         rank=current_rank,
-                        visible_link=serp_result['visible_link'] or 'None'))
+                        visible_link=serp_result.get('visible_link'))
                     if 'link' in serp_result and serp_result['link'] and \
                        not [ e for e in self.search_results[result_type] if e['link'] == serp_result['link'] ]:
                         self.search_results[result_type].append(serp_result)
                         serp_result['rank'] = current_rank
                         print("\t  [NEWLINK] {visible_link}".format(
-                            visible_link=serp_result['visible_link'] or 'None'))
+                            visible_link=serp_result.get('visible_link')))
                         current_rank += 1
                         self.num_results += 1
                     elif 'link' in serp_result and serp_result['link'] and \
