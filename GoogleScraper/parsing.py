@@ -563,14 +563,14 @@ class BaiduParser(Parser):
         },
         
         'brand_zone_side': {
-            '0': {
-                'container': 'td[align="left"] > div:first-child',
-                'result_container': 'div:nth-child(3) > div:nth-child(1)',
-                'link': 'div:nth-child(1) a::attr(href)',
-                'snippet': 'div:nth-child(3) a::text',
-                'title': 'div:nth-child(1) a::text',
-                'visible_link': 'div:nth-child(5) a::text'
-            },
+            # '0': {
+            #     'container': 'td[align="left"] > div:first-child',
+            #     'result_container': 'div:nth-child(3) > div:nth-child(1)',
+            #     'link': 'div:nth-child(1) a::attr(href)',
+            #     'snippet': 'div:nth-child(3) a::text',
+            #     'title': 'div:nth-child(1) a::text',
+            #     'visible_link': 'div:nth-child(5) a::text'
+            # },
             '1': {
                 'container': '#content_right',
                 'result_container': 'td[align="left"] > div > div > div',
