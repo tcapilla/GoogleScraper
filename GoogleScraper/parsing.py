@@ -428,7 +428,7 @@ class GoogleParser(Parser):
                 'title': '._Ead > a::text',
                 'link': '._Ead > a::attr(href)',
                 'price': '._Bad > b',
-                'store': '._Aad > span::text' 
+                'store': '._Aad > span.a::text' 
             },
             '1': {
                 'container': '#rhs_block',
@@ -445,6 +445,16 @@ class GoogleParser(Parser):
                 'link': '.fl::attr(href)',
                 'price': '._Vpc > b',
                 'store': '.a' 
+            },
+        },
+        'mobile_pla': {
+            '0': {
+                'container': '.shopping-carousel-container',
+                'result_container': '.pla-unit-container',
+                'title': '._HLg',
+                'link': '.pla-unit::attr(href)',
+                'price': '._XJg > div',
+                'store': '._FLg' 
             },
         }
     }
