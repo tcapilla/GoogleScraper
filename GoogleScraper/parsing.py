@@ -405,10 +405,19 @@ class GoogleParser(Parser):
             '0': {
                 'container': '#center_col',
                 'result_container': '.ads-ad',
+                'title': 'h3 > a:nth-child(2)::text',
                 'link': 'h3 > a:nth-child(2)::attr(href)',
                 'snippet': '.ads-creative::text',
-                'title': 'h3 > a:nth-child(2)::text',
                 'visible_link': '.ads-visurl cite::text',
+            },
+            # Mobile ads
+            '1': {
+                'container': '._Ak',
+                'result_container': '.mnr-c',
+                'title': '._uWj > h3',
+                'link': 'ads-ad > a::attr(href)',
+                'snippet': '.ads-creative',
+                'visible_link': '.ads-visurl > cite',
             }
         },
         'ads_side': {
@@ -446,9 +455,8 @@ class GoogleParser(Parser):
                 'price': '._Vpc > b',
                 'store': '.a' 
             },
-        },
-        'mobile_pla': {
-            '0': {
+            # Mobile PLAs
+            '3': {
                 'container': '.shopping-carousel-container',
                 'result_container': '.pla-unit-container',
                 'title': '._HLg',
