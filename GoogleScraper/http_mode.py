@@ -272,9 +272,13 @@ class HttpScrape(SearchEngineScrape, threading.Timer):
 
         self.build_search()
 
-        if rand:
-            # Add desktop and mobile keyward args. -dmatysiak
-            self.headers['User-Agent'] = random.choice(user_agents)
+        if Config['SCRAPING'].get('user_agents'):
+            user_agents_actual = Config['SCRAPING'].get('user_agents')
+        else:
+            user_agents_actual = user_agents
+            
+        if rand:                
+            self.headers['User-Agent'] = random.choice(user_agents_actual)
 
         try:
             super().detection_prevention_sleep()
