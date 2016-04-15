@@ -391,8 +391,6 @@ class GoogleParser(Parser):
     normal_search_selectors = {
         'organic': {
             '0': {
-                #'container': 'div.srg',
-                #'result_container': 'div.rc',
                 'container': '#center_col',
                 'result_container': 'div.g ',  
                 'link': 'h3.r > a:first-child::attr(href)',
@@ -401,69 +399,77 @@ class GoogleParser(Parser):
                 'visible_link': 'cite::text'
             }
         },
-        'ads_main': {
+        'ads_top': {
             '0': {
-                'container': '#center_col',
+                'container': '#_Ltg',
                 'result_container': '.ads-ad',
-                'title': 'h3 > a:nth-child(2)::text',
-                'link': 'h3 > a:nth-child(2)::attr(href)',
-                'snippet': '.ads-creative::text',
-                'visible_link': '.ads-visurl cite::text',
-            },
-            # Mobile ads
-            '1': {
-                'container': '._Ak',
-                'result_container': '.mnr-c',
-                'title': '._uWj > h3',
-                'link': 'ads-ad > a::attr(href)',
-                'snippet': '.ads-creative',
+                'title': 'h3 > a',
+                'link': 'h3 > a',
                 'visible_link': '.ads-visurl > cite',
-            }
-        },
-        'ads_side': {
-            '0': {
-                'container': '#rhs_block',
-                'result_container': '.ads-ad',
-                'link': 'h3 > a:nth-child(2)::attr(href)',
-                'snippet': '.ads-creative::text',
-                'title': 'h3 > a:nth-child(2)::text',
-                'visible_link': '.ads-visurl cite::text',
-            }
-        },
-        'pla': {
-            '0': {
-                'container': '#rhs_block',
-                'result_container': '._Fcd',
-                'title': '._Ead > a::text',
-                'link': '._Ead > a::attr(href)',
-                'price': '._Bad > b',
-                'store': '._Aad > span.a::text' 
+                'content': '.ads-creative'
             },
+                
+            # Mobile
             '1': {
-                'container': '#rhs_block',
-                'result_container': '.pla-hovercard-content-ellip',
-                'title': '.fl::text',
-                'link': '.fl::attr(href)',
-                'price': '._Vpc > b',
-                'store': '.a' 
+                'container': '#tads',
+                'result_container': '.ads-ad',
+                'title': '._uWj > h3',
+                'link': 'a[id$="s0p"] ',
+                'visible_link': '.ads-visurl > cite',
+                'content': '.ads-creative'
+                    
             },
-            '2': {
-                'container': '.top-pla-group-inner',
-                'result_container': '.pla-hovercard-content-ellip',
-                'title': '.fl::text',
-                'link': '.fl::attr(href)',
-                'price': '._Vpc > b',
-                'store': '.a' 
+        },
+        'ads_bottom': {
+            '0': {
+                'container': '#_Ktg',
+                'result_container': '.ads-ad',
+                'title': 'h3 > a',
+                'link': 'h3 > a',
+                'visible_link': '.ads-visurl > cite',
+                'content':'.ads-creative'
             },
-            # Mobile PLAs
-            '3': {
+
+            # Mobile
+            '1': {
+                'container': '#tadsb',
+                'result_container': '.ads-ad',
+                'title': '._uWj > h3',
+                'link': 'a[id$="s3p"]',
+                'visible_link': '.ads-visurl > cite',
+                'content': '.ads-creative'
+
+            },
+        },
+        'pla_main': {
+            '0': {
+                'container': '#center_col > table.ts',
+                'result_container': 'td[valign="top"]',
+                'title': 'div:nth-child(first div) > a',
+                'link': 'div:nth-child(firs) > a',
+                'price': 'div:nth-child(second)',
+                'store': 'div:nth-child(third) > cite'
+            },
+
+            # Mobile
+            '1': {
                 'container': '.shopping-carousel-container',
                 'result_container': '.pla-unit-container',
-                'title': '._HLg',
-                'link': '.pla-unit::attr(href)',
-                'price': '._XJg > div',
-                'store': '._FLg' 
-            },
+                'title': 'h4._HLg',
+                'link': 'a.pla-unit',
+                'price': '._XJg',
+                'store': '._FLg'
+            }
+        },
+        'pla_side': {
+            '0': {
+                'container': '#rhs_block > table.ts',
+                'result_container': 'td[valign="top"]',
+                'title': '._cf > div:nth-child(first) > a',
+                'link': '._cf > div:nth-child(first) > a',
+                'price': '._cf > div:nth-child(second)',
+                'store': '._cf > div:nth-child(third) > cite'
+            }
         }
     }
 
