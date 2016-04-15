@@ -403,8 +403,8 @@ class GoogleParser(Parser):
             '0': {
                 'container': '#_Ltg',
                 'result_container': '.ads-ad',
-                'title': 'h3 > a',
-                'link': 'h3 > a',
+                'title': 'h3 > a::text',
+                'link': 'h3 > a::attr(href)',
                 'visible_link': '.ads-visurl > cite',
                 'content': '.ads-creative'
             },
@@ -414,7 +414,7 @@ class GoogleParser(Parser):
                 'container': '#tads',
                 'result_container': '.ads-ad',
                 'title': '._uWj > h3',
-                'link': 'a[id$="s0p"] ',
+                'link': 'a[id$="s0p"]::attr(href)',
                 'visible_link': '.ads-visurl > cite',
                 'content': '.ads-creative'
                     
@@ -424,8 +424,8 @@ class GoogleParser(Parser):
             '0': {
                 'container': '#_Ktg',
                 'result_container': '.ads-ad',
-                'title': 'h3 > a',
-                'link': 'h3 > a',
+                'title': 'h3 > a::text',
+                'link': 'h3 > a::attr(href)',
                 'visible_link': '.ads-visurl > cite',
                 'content':'.ads-creative'
             },
@@ -435,7 +435,7 @@ class GoogleParser(Parser):
                 'container': '#tadsb',
                 'result_container': '.ads-ad',
                 'title': '._uWj > h3',
-                'link': 'a[id$="s3p"]',
+                'link': 'a[id$="s3p"]::attr(href)',
                 'visible_link': '.ads-visurl > cite',
                 'content': '.ads-creative'
 
@@ -445,10 +445,10 @@ class GoogleParser(Parser):
             '0': {
                 'container': '#center_col > table.ts',
                 'result_container': 'td[valign="top"]',
-                'title': 'div:nth-child(first div) > a',
-                'link': 'div:nth-child(firs) > a',
-                'price': 'div:nth-child(second)',
-                'store': 'div:nth-child(third) > cite'
+                'title': 'div:nth-child(2) > a::text',
+                'link': 'div:nth-child(2) > a::attr(href)',
+                'price': 'div:nth-child(3)',
+                'store': 'div:nth-child(4) > cite'
             },
 
             # Mobile
@@ -456,7 +456,7 @@ class GoogleParser(Parser):
                 'container': '.shopping-carousel-container',
                 'result_container': '.pla-unit-container',
                 'title': 'h4._HLg',
-                'link': 'a.pla-unit',
+                'link': 'a.pla-unit::attr(href)',
                 'price': '._XJg',
                 'store': '._FLg'
             }
@@ -465,10 +465,10 @@ class GoogleParser(Parser):
             '0': {
                 'container': '#rhs_block > table.ts',
                 'result_container': 'td[valign="top"]',
-                'title': '._cf > div:nth-child(first) > a',
-                'link': '._cf > div:nth-child(first) > a',
-                'price': '._cf > div:nth-child(second)',
-                'store': '._cf > div:nth-child(third) > cite'
+                'title': '._cf > div:nth-child(2) > a::text',
+                'link': '._cf > div:nth-child(2) > a::attr(href)',
+                'price': '._cf > div:nth-child(3)',
+                'store': '._cf > div:nth-child(4) > cite'
             }
         }
     }
