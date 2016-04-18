@@ -262,8 +262,8 @@ class Parser():
         for restype, res in self.search_results.items():
             api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
                             points=len(res),
-                            tags=["keyword:{kw}".format(kw=self.query),
-                                  "search_engine:{se}".format(se=self.search_engine),
+                            tags=[#"keyword:{kw}".format(kw=self.query),
+                                  "search_engine:{se}".format(se=Config['SCRAPING']['search_engines']),
                                   "env:{e}".format(e=Config['GLOBAL']['env_name'])])
 
 
