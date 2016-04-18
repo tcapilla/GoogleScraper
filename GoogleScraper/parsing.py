@@ -16,7 +16,7 @@ from datadog import initialize, api
 
 
 logger = logging.getLogger('GoogleScraper')
-initialize(**Config['DATADOG_KEYS'])
+initialize(**dict(Config['DATADOG_KEYS']))
 
 
 class InvalidSearchTypeException(Exception):
