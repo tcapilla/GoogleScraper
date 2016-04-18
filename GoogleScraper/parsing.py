@@ -12,8 +12,11 @@ from GoogleScraper.database import SearchEngineResultsPage, generate_id
 from GoogleScraper.config import Config
 from GoogleScraper.log import out
 from cssselect import HTMLTranslator
+from datadog import initialize, api
+
 
 logger = logging.getLogger('GoogleScraper')
+initialize(**Config['DATADOG_KEYS'])
 
 
 class InvalidSearchTypeException(Exception):
@@ -203,7 +206,7 @@ class Parser():
                 
                 to_extract = set(selectors.keys()) - {'container', 'result_container'}
                 selectors_to_use = {key: selectors[key] for key in to_extract if key in selectors.keys()}
-
+                
                 current_rank = 1
                 for result in results:
                     # Let's add primitive support for CSS3 pseudo selectors
@@ -253,6 +256,11 @@ class Parser():
                                 rank=serp_result['rank'],
                                 old_vlink=self.search_results[result_type][vl_index]))
                             self.search_results[result_type][vl_index] = serp_result
+
+                    for restype, res for self.search_results.items():
+                        api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
+                                        points=len(res),
+                                        tags=["keyword:{kw}".format(kw=self.query)])
 
 
     def advanced_css(self, selector, element):
