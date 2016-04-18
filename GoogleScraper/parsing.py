@@ -257,7 +257,7 @@ class Parser():
                                 old_vlink=self.search_results[result_type][vl_index]))
                             self.search_results[result_type][vl_index] = serp_result
 
-                    for restype, res for self.search_results.items():
+                    for restype, res in self.search_results.items():
                         api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
                                         points=len(res),
                                         tags=["keyword:{kw}".format(kw=self.query)])
