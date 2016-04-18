@@ -262,7 +262,9 @@ class Parser():
                     for restype, res in self.search_results.items():
                         api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
                                         points=len(res),
-                                        tags=["keyword:{kw}".format(kw=self.query)])
+                                        tags=["keyword:{kw}".format(kw=self.query),
+                                              "search_engine:{se}".format(se=self.search_engine),
+                                              "env:{e}".format(e=Config['ENV_NAME'])])
 
 
     def advanced_css(self, selector, element):
