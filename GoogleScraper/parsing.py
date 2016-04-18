@@ -16,7 +16,6 @@ from datadog import initialize, api
 
 
 logger = logging.getLogger('GoogleScraper')
-initialize(**dict(Config['DATADOG_KEYS']))
 
 
 class InvalidSearchTypeException(Exception):
@@ -86,6 +85,8 @@ class Parser():
             Assertion error if the subclassed
             specific parser cannot handle the the settings.
         """
+        initialize(**dict(Config['DATADOG_KEYS']))
+        
         self.searchtype = Config['SCRAPING'].get('search_type', 'normal')
         assert self.searchtype in self.search_types, 'search type "{}" is not supported in {}'.format(
             self.searchtype,
