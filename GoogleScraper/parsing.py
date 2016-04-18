@@ -259,12 +259,12 @@ class Parser():
                             self.search_results[result_type][vl_index] = serp_result
 
 
-                    for restype, res in self.search_results.items():
-                        api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
-                                        points=len(res),
-                                        tags=["keyword:{kw}".format(kw=self.query),
-                                              "search_engine:{se}".format(se=self.search_engine),
-                                              "env:{e}".format(e=Config['GLOBAL']['env_name'])])
+        for restype, res in self.search_results.items():
+            api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
+                            points=len(res),
+                            tags=["keyword:{kw}".format(kw=self.query),
+                                  "search_engine:{se}".format(se=self.search_engine),
+                                  "env:{e}".format(e=Config['GLOBAL']['env_name'])])
 
 
     def advanced_css(self, selector, element):
