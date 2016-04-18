@@ -134,5 +134,6 @@ def get_command_line(print_help=False):
             ['clean', 'debug', 'simulate', 'proxy_file', 'view_config', 'config_file', 'mysql_proxy_db', 'verbosity',
              'output_format', 'shell', 'output_filename', 'output_format', 'version', 'extended_config']),
         'OUTPUT': make_dict(['output_filename']),
-        'SCRAPE_INFOS': make_dict(['scrape_id'])
+        'SCRAPE_INFOS': make_dict(['scrape_id']),
+        'DATADOG_KEYS': make_dict(['api_key', 'app_key'])
     }
