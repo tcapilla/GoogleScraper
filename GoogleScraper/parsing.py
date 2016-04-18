@@ -16,7 +16,8 @@ from datadog import initialize, api
 
 
 logger = logging.getLogger('GoogleScraper')
-initialize(**Config['DATADOG_KEYS'])
+if Config.get('DATADOG_KEYS'):
+    initialize(**Config['DATADOG_KEYS'])
 
 
 class InvalidSearchTypeException(Exception):
@@ -257,10 +258,11 @@ class Parser():
                                 old_vlink=self.search_results[result_type][vl_index]))
                             self.search_results[result_type][vl_index] = serp_result
 
-                    for restype, res in self.search_results.items():
-                        api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
-                                        points=len(res),
-                                        tags=["keyword:{kw}".format(kw=self.query)])
+                    if Config.get('DATADOG_KEYS'):
+                        for restype, res in self.search_results.items():
+                            api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
+                                            points=len(res),
+                                            tags=["keyword:{kw}".format(kw=self.query)])
 
 
     def advanced_css(self, selector, element):
