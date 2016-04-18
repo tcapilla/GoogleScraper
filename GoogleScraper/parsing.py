@@ -264,7 +264,7 @@ class Parser():
                                         points=len(res),
                                         tags=["keyword:{kw}".format(kw=self.query),
                                               "search_engine:{se}".format(se=self.search_engine),
-                                              "env:{e}".format(e=Config['ENV_NAME'])])
+                                              "env:{e}".format(e=Config['GLOBAL']['env_name'])])
 
 
     def advanced_css(self, selector, element):
