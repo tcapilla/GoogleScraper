@@ -263,8 +263,11 @@ class Parser():
             api.Metric.send(metric="l2wr.{rt}".format(rt=restype),
                             points=len(res),
                             tags=[#"keyword:{kw}".format(kw=self.query),
-                                  "search_engine:{se}".format(se=Config['SCRAPING']['search_engines']),
-                                  "env:{e}".format(e=Config['GLOBAL']['env_name'])])
+                                "search_engine:{se}".format(se=Config['SCRAPING']['search_engines']),
+                                "env:{e}".format(e=Config['GLOBAL']['env_name']),
+                                "scrape_id:{s}".format(s=Config['SCRAPE_INFOS']['scrape_id']),
+                                "project_id:{p}".format(p=config['SCRAPE_INFOS']['project_id']),
+                                "device:{d}".format(d=config['SCRAPE_INFOS']['device'])])
 
 
     def advanced_css(self, selector, element):

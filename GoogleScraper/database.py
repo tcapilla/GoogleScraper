@@ -135,7 +135,7 @@ class SearchEngineResultsPage(Base):
                     parsed = urlparse(link['link'])
 
                     # fill with nones to prevent key errors
-                    [link.update({key: None}) for key in ('snippet', 'title', 'visible_link', 'price', 'store') if key not in link]
+                    [link.update({key: None}) for key in ('snippet', 'title', 'visible_link', 'price', 'store', 'device') if key not in link]
 
                     visibility_link = self._strip_protocol(self._strip_delimiter(link.get('visible_link')))
                     actual_link = self._strip_protocol(self._strip_delimiter(link.get('link')))
@@ -157,6 +157,7 @@ class SearchEngineResultsPage(Base):
                         serp=self,
                         price=link.get('price'),
                         store=link.get('store'),
+                        device=Config['SCRAPE_INFOS'].get('device'),
                     )
 
     def set_values_from_scraper(self, scraper):
@@ -209,6 +210,7 @@ class Link(Base):
     serp_id = Column(String, ForeignKey('serp.id'))
     store = Column(String(64))
     price = Column(String(64))
+    device = Column(Integer)
 
     serp = relationship(SearchEngineResultsPage, backref=backref('links', uselist=True))
 
