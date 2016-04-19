@@ -266,8 +266,8 @@ class Parser():
                                 "search_engine:{se}".format(se=Config['SCRAPING']['search_engines']),
                                 "env:{e}".format(e=Config['GLOBAL']['env_name']),
                                 "scrape_id:{s}".format(s=Config['SCRAPE_INFOS']['scrape_id']),
-                                "project_id:{p}".format(p=config['SCRAPE_INFOS']['project_id']),
-                                "device:{d}".format(d=config['SCRAPE_INFOS']['device'])])
+                                "project_id:{p}".format(p=Config['SCRAPE_INFOS']['project_id']),
+                                "device:{d}".format(d=Config['SCRAPE_INFOS']['device'])])
 
 
     def advanced_css(self, selector, element):
