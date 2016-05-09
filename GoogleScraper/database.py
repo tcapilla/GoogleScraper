@@ -132,14 +132,16 @@ class SearchEngineResultsPage(Base):
         for key, value in parser.search_results.items():
             if isinstance(value, list):
                 for link in value:
-                    parsed = urlparse(link['link'])
-
                     # fill with nones to prevent key errors
                     [link.update({key: None}) for key in ('snippet', 'title', 'visible_link', 'price', 'store', 'device') if key not in link]
 
                     visibility_link = self._strip_protocol(self._strip_delimiter(link.get('visible_link')))
                     actual_link = self._strip_protocol(self._strip_delimiter(link.get('link')))
+
                     
+                    domain = urlparse(link['visible_link']).netloc
+                    if not domain:
+                        domain = urlparse(link['link']).netloc
                     Link(
                         id=generate_id(),
                         link=self._strip_delimiter(link.get('link')),
@@ -149,7 +151,7 @@ class SearchEngineResultsPage(Base):
                         actual_link=actual_link,
                         user=link.get('user'),
                         profile_url=link.get('profile_url'),
-                        domain=parsed.netloc,
+                        domain=domain,
                         rank=link.get('rank'),
                         link_type=key,
                         scrape_id=Config['SCRAPE_INFOS'].get('scrape_id'),
