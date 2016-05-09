@@ -138,7 +138,6 @@ class SearchEngineResultsPage(Base):
                     visibility_link = self._strip_protocol(self._strip_delimiter(link.get('visible_link')))
                     actual_link = self._strip_protocol(self._strip_delimiter(link.get('link')))
 
-                    
                     domain = urlparse(link['visible_link']).netloc
                     if not domain:
                         domain = urlparse(link['link']).netloc
